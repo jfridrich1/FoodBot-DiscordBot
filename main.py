@@ -44,10 +44,9 @@ async def ping(ctx):
 
 @bot.command()
 async def eat(ctx):
-    meals, prices = scrapping()
+    meals, main_prices, secondary_prices = scrapping()
 
-    #response = "\n".join(meals).join(prices)
-    response = "\n".join([f"{meals[i]} {prices[i]}" for i in range(len(meals))])
+    response = "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
     await ctx.send(f"**Dnešná ponuka:**\n{response}")
 
 def start_bot():
