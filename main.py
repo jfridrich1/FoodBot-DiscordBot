@@ -47,15 +47,11 @@ async def ping(ctx):
 
 @bot.command()
 @commands.has_permissions(manage_messages=True)
-async def clear_and_post(ctx):
-    # Vymaže posledných 100 správ
-    await ctx.channel.purge(limit=10)
-
-@bot.command()
 async def eat(ctx):
     meals, main_prices, secondary_prices = scrapping()
 
     response = "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
+    await ctx.channel.purge(limit=10)
     await ctx.send(f"**Dnešné menu:**\n{response}")
 
 if __name__ == '__main__':
