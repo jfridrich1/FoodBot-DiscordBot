@@ -10,3 +10,4 @@ def scrapping():
     #test
     with open("test_scrap","w", encoding="utf-8") as f:
         f.write(html_response.text)
+    return html_response.text
