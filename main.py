@@ -29,7 +29,7 @@ async def on_ready():
 
 @bot.event
 async def on_message(message):
-    if message.autor == bot.user:
+    if message.author == bot.user:
         return
     if "gej" in message.content.lower().strip():
         await message.channel.send('burin')
