@@ -5,23 +5,23 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
+load_dotenv()
+
 ints = discord.Intents.default()
 ints.message_content = True
 bot = commands.Bot(command_prefix='!', intents=ints)
 
-def run_fake_http_server():
-    class SimpleHandler(BaseHTTPRequestHandler):
-        def do_GET(self):
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(b"Bot is running.")
+class Handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers
+        self.wfile.write('...Bot is running...')
 
+def start_http_server():
     port = int(os.environ.get("PORT", 8080))
-    server = HTTPServer(("0.0.0.0", port), SimpleHandler)
+    server = HTTPServer(("0.0.0.0", port), Handler)
     print(f"Fake HTTP server bezi na porte {port}")
     server.serve_forever()
-
-threading.Thread(target=run_fake_http_server, daemon=True).start()
 
 @bot.event
 async def on_ready():
@@ -35,5 +35,9 @@ async def ping(ctx):
 async def gej(ctx):
     await ctx.send('burin')
 
-load_dotenv()
-bot.run(os.getenv('TOKEN'))
+def start_bot():
+    bot.run(os.getenv('TOKEN'))
+
+if __name__ == '__main__':
+    threading.Thread(target=start_bot, daemon=True).start()
+    start_http_server
