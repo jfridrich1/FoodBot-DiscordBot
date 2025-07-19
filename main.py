@@ -47,7 +47,7 @@ async def eat(ctx):
     meals, main_prices, secondary_prices = scrapping()
 
     response = "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
-    await ctx.send(f"**Dnešná ponuka:**\n{response}")
+    await ctx.send(f"**Dnešné menu:**\n{response}")
 
 def start_bot():
     bot.run(os.getenv('TOKEN'))

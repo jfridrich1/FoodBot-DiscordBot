@@ -1,22 +1,19 @@
 import requests
-import datetime
 from bs4 import BeautifulSoup
 
 def scrapping():
-    meals = []
-    main_prices = []
-    secondary_prices = []
+    meals, main_prices, secondary_prices = [], [], []
     url = "https://eatandmeet.sk/"
     html_response = requests.get(url)
     soup = BeautifulSoup(html_response.text, 'html.parser')
 
     today_menu_div = soup.select_one("div.tab-pane.fade.active.in")
     if not today_menu_div:
-        return ["(Today was not found)"]
+        return ["(Today was not found)"], None, None
     
-    menu_body = today_menu_div.find_all("div", class_="menu-body menu-left ")
+    menu_body = today_menu_div.select("div.menu-body.menu-left")
     if not menu_body:
-        return ["(Today menu body error)"]
+        return ["(Today menu body error)"], None, None
     
     for body_div in menu_body:
         desc_tag = body_div.find("p", class_="desc")
