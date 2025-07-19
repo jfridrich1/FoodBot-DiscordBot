@@ -45,7 +45,7 @@ async def ping(ctx):
 @bot.command()
 async def eat(ctx):
     html_code = scrapping()
-    await ctx.send(html_code)
+    await ctx.send(f"```html\n{html_code[:1900]}\n```")
 
 def start_bot():
     bot.run(os.getenv('TOKEN'))
