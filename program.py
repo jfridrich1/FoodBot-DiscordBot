@@ -7,10 +7,12 @@ def scrapping():
     html_response = requests.get(url)
     soup = BeautifulSoup(html_response.text, 'html.parser')
 
-    today_menu_div = soup.find("div", class_="tab-pane fade  active  in")
+    today_menu_div = soup.select_one("div.tab-pane.fade.active.in")
     if not today_menu_div:
         return ["(Today was not found)"]
     menu_description = today_menu_div.find_all("div", class_="menu-description")
+    if not menu_description:
+        return ["(Today menu was not found)"]
     meals = []
 
     for desc_div in menu_description:
