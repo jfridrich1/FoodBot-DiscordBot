@@ -44,8 +44,13 @@ async def ping(ctx):
 
 @bot.command()
 async def eat(ctx):
-    html_code = scrapping()
-    await ctx.send(f"```html\n{html_code[:1900]}\n```")
+    meals = scrapping()
+
+    if not meals:
+        await ctx.send("Today was not found")
+    else:
+        response = "\n".join(meals)
+        await ctx.send(f"**Dnešná ponuka:**\n{response}")
 
 def start_bot():
     bot.run(os.getenv('TOKEN'))

@@ -8,6 +8,8 @@ def scrapping():
     soup = BeautifulSoup(html_response.text, 'html.parser')
 
     today_menu_div = soup.find("div", class_="tab-pane fade  active  in")
+    if not today_menu_div:
+        return ["(Today was not found)"]
     menu_description = today_menu_div.find_all("div", class_="menu-description")
     meals = []
 
