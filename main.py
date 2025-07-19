@@ -27,13 +27,17 @@ def start_http_server():
 async def on_ready():
     print(f'Login {bot.user.name}')
 
+@bot.event
+async def on_message(message):
+    if message.autor == bot.user:
+        return
+    if "gej" in message.content.lower():
+        await message.channel.send('burin')
+    await bot.process_commands(message)
+
 @bot.command()
 async def ping(ctx):
     await ctx.send('bu')
-
-@bot.command()
-async def gej(ctx):
-    await ctx.send('burin')
 
 def start_bot():
     bot.run(os.getenv('TOKEN'))
