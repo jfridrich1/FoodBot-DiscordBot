@@ -18,6 +18,9 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(b'...Bot is running...')
 
+def start_bot():
+    bot.run(os.getenv('TOKEN'))
+
 def start_http_server():
     port = int(os.environ.get("PORT", 8080))
     server = HTTPServer(("0.0.0.0", port), Handler)
@@ -43,14 +46,17 @@ async def ping(ctx):
     await ctx.send('bu')
 
 @bot.command()
+@commands.has_permissions(manage_messages=True)
+async def clear_and_post(ctx):
+    # Vymaže posledných 100 správ
+    await ctx.channel.purge(limit=10)
+
+@bot.command()
 async def eat(ctx):
     meals, main_prices, secondary_prices = scrapping()
 
     response = "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
     await ctx.send(f"**Dnešné menu:**\n{response}")
-
-def start_bot():
-    bot.run(os.getenv('TOKEN'))
 
 if __name__ == '__main__':
     threading.Thread(target=start_bot, daemon=True).start()
