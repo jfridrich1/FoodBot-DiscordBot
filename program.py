@@ -3,6 +3,8 @@ import datetime
 from bs4 import BeautifulSoup
 
 def scrapping():
+    meals = []
+    prices = []
     url = "https://eatandmeet.sk/"
     html_response = requests.get(url)
     soup = BeautifulSoup(html_response.text, 'html.parser')
@@ -10,20 +12,17 @@ def scrapping():
     today_menu_div = soup.select_one("div.tab-pane.fade.active.in")
     if not today_menu_div:
         return ["(Today was not found)"]
-    menu_description = today_menu_div.find_all("div", class_="menu-description")
-    if not menu_description:
-        return ["(Today menu was not found)"]
-    meals = []
+    
+    menu_body = today_menu_div.find_all("div", class_="menu-body menu-left ")
+    if not menu_body:
+        return ["(Today menu body error)"]
+    
+    for body_div in menu_body:
+        desc_tag = body_div.find("p", class_="desc")
+        price_tag = body_div.find("span", class_="price")
+        desc_text = desc_tag.find(text=True, recursive=False).strip()
+        price_text = price_tag.find(text=True, recursive=False).strip()
+        meals.append(desc_text)
+        prices.append(price_text)
 
-    for desc_div in menu_description:
-        p_tag = desc_div.find("p", class_="desc")
-        if p_tag:
-            text = p_tag.find(text=True, recursive=False).strip()
-            meals.append(text)
-
-
-    with open("test_scrap.txt", "w", encoding="utf-8") as f:
-        for meal in meals:
-            f.write(meal + "\n")
-
-    return meals
+    return meals, prices
