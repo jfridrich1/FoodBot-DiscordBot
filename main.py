@@ -14,8 +14,8 @@ bot = commands.Bot(command_prefix='!', intents=ints)
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
-        self.end_headers
-        self.wfile.write('...Bot is running...')
+        self.end_headers()
+        self.wfile.write(b'...Bot is running...')
 
 def start_http_server():
     port = int(os.environ.get("PORT", 8080))
@@ -31,7 +31,7 @@ async def on_ready():
 async def on_message(message):
     if message.autor == bot.user:
         return
-    if "gej" in message.content.lower():
+    if "gej" in message.content.lower().strip():
         await message.channel.send('burin')
     await bot.process_commands(message)
 
@@ -44,4 +44,4 @@ def start_bot():
 
 if __name__ == '__main__':
     threading.Thread(target=start_bot, daemon=True).start()
-    start_http_server
+    start_http_server()
