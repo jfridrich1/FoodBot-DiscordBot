@@ -33,6 +33,8 @@ async def on_message(message):
         return
     if "gej" in message.content.lower().strip():
         await message.channel.send('burin')
+    if "burin" in message.content.lower().strip():
+        await message.channel.send('🇭🇺')
     await bot.process_commands(message)
 
 @bot.command()
