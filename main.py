@@ -1,3 +1,4 @@
+from program import scrapping
 import discord
 import os
 import threading
@@ -40,6 +41,11 @@ async def on_message(message):
 @bot.command()
 async def ping(ctx):
     await ctx.send('bu')
+
+@bot.command()
+async def eat(ctx):
+    html_code = scrapping()
+    await ctx.send(html_code)
 
 def start_bot():
     bot.run(os.getenv('TOKEN'))
