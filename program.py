@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from exceptions import MenuNotFoundError, MenuBodyNotFoundError
 
 def scrapping():
     meals, main_prices, secondary_prices = [], [], []
@@ -9,11 +10,11 @@ def scrapping():
 
     today_menu_div = soup.select_one("div.tab-pane.fade.active.in")
     if not today_menu_div:
-        return ["(Today was not found)"], None, None
+        raise MenuNotFoundError("Dnešné menu sa nenašlo.")
     
     menu_body = today_menu_div.select("div.menu-body.menu-left")
     if not menu_body:
-        return ["(Today menu body error)"], None, None
+        raise MenuBodyNotFoundError("Nenašli sa položky z menu.")
     
     for body_div in menu_body:
         desc_tag = body_div.find("p", class_="desc")

@@ -5,6 +5,7 @@ import threading
 from discord.ext import commands
 from dotenv import load_dotenv
 from http.server import BaseHTTPRequestHandler, HTTPServer
+from exceptions import MenuNotFoundError, MenuBodyNotFoundError
 
 load_dotenv()
 
@@ -48,11 +49,18 @@ async def ping(ctx):
 @bot.command()
 @commands.has_permissions(manage_messages=True)
 async def eat(ctx):
-    meals, main_prices, secondary_prices = scrapping()
+    try:
+        meals, main_prices, secondary_prices = scrapping()
 
-    response = "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
-    await ctx.channel.purge(limit=10)
-    await ctx.send(f"**Dnešné menu:**\n{response}")
+        response = "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
+        await ctx.channel.purge(limit=10)
+        await ctx.send(f"**Dnešné menu:**\n{response}")
+    except MenuNotFoundError as e:
+        await ctx.send("Nepodarilo sa nájsť dnešné menu.")
+    except MenuBodyNotFoundError as e:
+        await ctx.send("Našlo sa menu, nepodarilo sa nájst položky z menu.")
+    except Exception as e:
+        await ctx.send(f"Neočakávaná chyba: {type(e).__name__}: {e}")
 
 if __name__ == '__main__':
     threading.Thread(target=start_bot, daemon=True).start()
