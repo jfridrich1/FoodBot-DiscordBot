@@ -51,10 +51,19 @@ async def ping(ctx):
 async def eat(ctx):
     try:
         meals, main_prices, secondary_prices = scrapping()
+        embed = discord.Embed(
+            title="📋 Dnešné menu",
+            description=(
+                "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
+            ),
+            color=0x00cc99  # zeleno-modrá farba
+        )
 
-        response = "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
+        embed.set_footer(text="Dátum: 20. 7. 2025")
         await ctx.channel.purge(limit=10)
-        await ctx.send(f"**Dnešné menu:**\n{response}")
+        await ctx.send(embed=embed)
+        
+        
     except MenuNotFoundError as e:
         await ctx.send("Nepodarilo sa nájsť dnešné menu.")
     except MenuBodyNotFoundError as e:
