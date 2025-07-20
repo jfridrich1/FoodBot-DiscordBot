@@ -32,4 +32,4 @@ def scrapping():
         secondary_prices.append(secondary_price)
         image_urls.append(image_src)
 
-    return meals, main_prices, secondary_prices
+    return meals, main_prices, secondary_prices, image_urls
