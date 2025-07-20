@@ -1,7 +1,8 @@
-from program import scrapping
 import discord
 import os
 import threading
+from datetime import datetime
+from program import scrapping
 from discord.ext import commands
 from dotenv import load_dotenv
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -50,19 +51,23 @@ async def ping(ctx):
 @commands.has_permissions(manage_messages=True)
 async def eat(ctx):
     try:
-        meals, main_prices, secondary_prices = scrapping()
-        embed = discord.Embed(
-            title="📋 Dnešné menu",
-            description=(
-                "\n".join([f"{meals[i]} {main_prices[i]} {secondary_prices[i]}" for i in range(len(meals))])
-            ),
-            color=0x00cc99  # zeleno-modrá farba
-        )
-
-        embed.set_footer(text="Dátum: 20. 7. 2025")
+        meals, main_prices, secondary_prices, image_urls = scrapping()
         await ctx.channel.purge(limit=10)
-        await ctx.send(embed=embed)
-        
+
+        today = datetime.today().strftime("%-d. %-m. %Y")
+        embed_list = []
+
+        for i in range(len(meals)):
+            embed = discord.Embed(
+                title=f"🍽 {meals[i]}",
+                description=f"Cena: **{main_prices[i]}** / *{secondary_prices[i]}*",
+                color=0x00cc99
+            )
+            embed.set_image(url=image_urls[i])
+            embed.set_footer(text=f"Dátum: {today}")
+            embed_list.append(embed)
+        # discord ma limit 10 embedov v embede, ak ich je viac - poslat po davkach po 10
+        await ctx.send(embeds=embed_list)
         
     except MenuNotFoundError as e:
         await ctx.send("Nepodarilo sa nájsť dnešné menu.")
