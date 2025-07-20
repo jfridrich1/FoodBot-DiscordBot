@@ -7,5 +7,5 @@ class MenuNotFoundError(ScrappingError):
 class MenuBodyNotFoundError(ScrappingError):
     """Exception: missing menu files."""
 
-class ItemImageNotFound(ScrappingError):
+class ImageNotFoundError(ScrappingError):
     """Exception: missing image file."""

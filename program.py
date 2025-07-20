@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from exceptions import MenuNotFoundError, MenuBodyNotFoundError, ImageNotFoundError
 
 def scrapping():
     meals, main_prices, secondary_prices, image_urls = [], [], [], []
@@ -25,7 +25,9 @@ def scrapping():
         secondary_price = price_tag.find("span").get_text(strip=True)
 
         image_tag = body_div.select_one("img.img-responsive.center-block")
-        image_src = image_tag.get("src") if image_tag else "N/A"
+        if not image_tag:
+            raise ImageNotFoundError("Obrázok sa nenašiel pre jednu z položiek menu.")
+        image_src = image_tag.get("src")
 
         meals.append(desc_text)
         main_prices.append(main_price)
