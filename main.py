@@ -58,7 +58,7 @@ async def testimage(ctx):
 @commands.has_permissions(manage_messages=True)
 async def eat(ctx):
     try:
-        meals, main_prices, secondary_prices, image_urls = scrapping()
+        meals, main_prices, secondary_prices, image_urls, allergens = scrapping()
         await ctx.channel.purge(limit=10)
 
         today = datetime.today().strftime("%-d. %-m. %Y")
@@ -66,12 +66,12 @@ async def eat(ctx):
 
         for i in range(len(meals)):
             embed = discord.Embed(
-                title=f"🍽 {meals[i]}",
+                title=f"🍽 {meals[i]} ",
                 description=f"Cena: **{main_prices[i]}** / *{secondary_prices[i]}*",
                 color=0x00cc99
             )
             embed.set_image(url=image_urls[i])
-            embed.set_footer(text=f"Dátum: {today}")
+            embed.set_footer(text=f"Dátum: {today} {allergens[i]}")
             embed_list.append(embed)
         # discord ma limit 10 embedov v embede, ak ich je viac - poslat po davkach po 10
         await ctx.send(embeds=embed_list)
