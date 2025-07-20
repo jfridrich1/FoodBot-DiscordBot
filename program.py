@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from exceptions import MenuNotFoundError, MenuBodyNotFoundError
 
 def scrapping():
-    meals, main_prices, secondary_prices = [], [], []
+    meals, main_prices, secondary_prices, image_urls = [], [], [], []
     url = "https://eatandmeet.sk/"
     html_response = requests.get(url)
     soup = BeautifulSoup(html_response.text, 'html.parser')
@@ -24,8 +24,12 @@ def scrapping():
         main_price = price_tag.find(text=True, recursive=False).strip()
         secondary_price = price_tag.find("span").get_text(strip=True)
 
+        image_tag = body_div.select_one("img.img-responsive.center-block")
+        image_src = image_tag.get("src") if image_tag else "N/A"
+
         meals.append(desc_text)
         main_prices.append(main_price)
         secondary_prices.append(secondary_price)
+        image_urls.append(image_src)
 
     return meals, main_prices, secondary_prices
