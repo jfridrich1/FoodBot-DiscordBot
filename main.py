@@ -48,6 +48,13 @@ async def ping(ctx):
     await ctx.send('bu')
 
 @bot.command()
+async def testimage(ctx):
+    url2 = "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
+    embed = discord.Embed(title="Test obrázok")
+    embed.set_image(url=url2)
+    await ctx.send(embed=embed)
+
+@bot.command()
 @commands.has_permissions(manage_messages=True)
 async def eat(ctx):
     try:
