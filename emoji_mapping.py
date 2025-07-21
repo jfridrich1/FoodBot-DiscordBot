@@ -1,13 +1,15 @@
-emoji_table = {
-    "polievka": "🥣",
-    "menu": "🍽",
-    "múčne": "🍞",
-    "vegetariánske": "🥦",
-    "šalát": "🥗"
+# Mapa kategórií a emoji
+emoji_map = {
+    "POLIEVKA": "🥣",
+    "MENU": "🍽",
+    "MÚČNE": "🥞",
+    "VEGETARIÁNSKE": "🥦",
+    "ŠALÁT": "🥗"
 }
 
-def get_emoji_for_title(title: str) -> str:
-    for key in emoji_table:
-        if key.lower() in title.lower():
-            return emoji_table[key]
+# Funkcia na mapovanie kategórie k príslušnému emoji
+def title_emoji_mapper(title: str) -> str:
+    for key in emoji_map:
+        if key in title.upper():
+            return emoji_map[key]
     return "🍽"

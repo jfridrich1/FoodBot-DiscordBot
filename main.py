@@ -7,14 +7,17 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from exceptions import MenuNotFoundError, MenuBodyNotFoundError
-from emoji_mapping import get_emoji_for_title
+from emoji_mapping import title_emoji_mapper
 
+EMBED_COLOR = 0xffe28a
 load_dotenv()
 
+# Priradenie práv botovi
 bot_intents = discord.Intents.default()
 bot_intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=bot_intents)
 
+# Falošný HTTP kvôli web hostovaniu
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
@@ -60,27 +63,35 @@ async def testimage(ctx):
 async def eat(ctx):
     try:
         meal_names, main_prices, secondary_prices, allergens, titles = scrapping()
-        await ctx.channel.purge(limit=10)
         embed_list = []
 
-        today = datetime.today().strftime("%-d. %-m. %Y")
+        # Premazanie správ pred poslaním novej spŕavy
+        await ctx.channel.purge(limit=10)
 
-        embed = discord.Embed(
+        # Získanie dnešného dátumu
+        current_date = datetime.today().strftime("%-d. %-m. %Y")
+
+        # Úvodná správa
+        start_embed = discord.Embed(
             title=f"**Dnešné menu**",
-            description=f"{today}",
-            color=0x00cc99
+            description=f"{current_date}",
+            color=EMBED_COLOR
         )
+        embed_list.append(start_embed)
 
+        # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
-            emoji = get_emoji_for_title(titles[i])
+            emoji = title_emoji_mapper(titles[i])
             embed = discord.Embed(
                 title=f"{emoji} {titles[i]} \n{meal_names[i]}",
                 description=f"Cena: *{main_prices[i]}*  **{secondary_prices[i]}**",
-                color=0x00cc99
+                color=EMBED_COLOR
             )
             embed.set_footer(text=f"{allergens[i]}")
             embed_list.append(embed)
-        # discord ma limit 10 embedov v embede, ak ich je viac - poslat po davkach po 10
+
+        # Discord ma limit 10 embedov v embede, ak ich je viac - poslat po davkach po 10
+        # Poslanie všetkých správ
         await ctx.send(embeds=embed_list)
         
     except MenuNotFoundError as e:
