@@ -7,6 +7,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from emoji_mapping import get_emoji_for_title
 
 load_dotenv()
 
@@ -56,7 +57,7 @@ async def testimage(ctx):
 
 @bot.command()
 @commands.has_permissions(manage_messages=True)
-async def eats(ctx):
+async def eat(ctx):
     try:
         meal_names, main_prices, secondary_prices, allergens, titles = scrapping()
         await ctx.channel.purge(limit=10)
@@ -65,8 +66,9 @@ async def eats(ctx):
         today = datetime.today().strftime("%-d. %-m. %Y")
 
         for i in range(len(meal_names)):
+            emoji = get_emoji_for_title(titles[i])
             embed = discord.Embed(
-                title=f"🍽 {titles[i]} {meal_names[i]} ",
+                title=f"{emoji} {titles[i]} {meal_names[i]} ",
                 description=f"Cena: **{main_prices[i]}** / *{secondary_prices[i]}*",
                 color=0x00cc99
             )
