@@ -10,9 +10,9 @@ from exceptions import MenuNotFoundError, MenuBodyNotFoundError
 
 load_dotenv()
 
-ints = discord.Intents.default()
-ints.message_content = True
-bot = commands.Bot(command_prefix='!', intents=ints)
+bot_intents = discord.Intents.default()
+bot_intents.message_content = True
+bot = commands.Bot(command_prefix='!', intents=bot_intents)
 
 class Handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -26,7 +26,7 @@ def start_bot():
 def start_http_server():
     port = int(os.environ.get("PORT", 8080))
     server = HTTPServer(("0.0.0.0", port), Handler)
-    print(f"Fake HTTP server bezi na porte {port}")
+    print(f"Fake HTTP server running on port {port}.")
     server.serve_forever()
 
 @bot.event
@@ -56,21 +56,20 @@ async def testimage(ctx):
 
 @bot.command()
 @commands.has_permissions(manage_messages=True)
-async def eat(ctx):
+async def eats(ctx):
     try:
-        meals, main_prices, secondary_prices, image_urls, allergens = scrapping()
+        meal_names, main_prices, secondary_prices, allergens, titles = scrapping()
         await ctx.channel.purge(limit=10)
-
-        today = datetime.today().strftime("%-d. %-m. %Y")
         embed_list = []
 
-        for i in range(len(meals)):
+        today = datetime.today().strftime("%-d. %-m. %Y")
+
+        for i in range(len(meal_names)):
             embed = discord.Embed(
-                title=f"🍽 {meals[i]} ",
+                title=f"🍽 {titles[i]} {meal_names[i]} ",
                 description=f"Cena: **{main_prices[i]}** / *{secondary_prices[i]}*",
                 color=0x00cc99
             )
-            embed.set_image(url=image_urls[i])
             embed.set_footer(text=f"Dátum: {today} {allergens[i]}")
             embed_list.append(embed)
         # discord ma limit 10 embedov v embede, ak ich je viac - poslat po davkach po 10
