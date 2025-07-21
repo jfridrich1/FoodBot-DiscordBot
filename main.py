@@ -60,7 +60,7 @@ async def testimage(ctx):
 async def eat(ctx):
     try:
         meal_names, main_prices, secondary_prices, allergens, titles = scrapping()
-        await ctx.channel.purge(limit=5)
+        await ctx.channel.purge(limit=2)
         embed_list = []
 
         today = datetime.today().strftime("%-d. %-m. %Y")
