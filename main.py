@@ -65,14 +65,20 @@ async def eat(ctx):
 
         today = datetime.today().strftime("%-d. %-m. %Y")
 
+        embed = discord.Embed(
+            title=f"**Dnešné menu**",
+            description=f"{today}",
+            color=0x00cc99
+        )
+
         for i in range(len(meal_names)):
             emoji = get_emoji_for_title(titles[i])
             embed = discord.Embed(
-                title=f"{emoji} {titles[i]} {meal_names[i]} ",
-                description=f"Cena: **{main_prices[i]}** / *{secondary_prices[i]}*",
+                title=f"{emoji} {titles[i]} \n{meal_names[i]}",
+                description=f"Cena: *{main_prices[i]}*  **{secondary_prices[i]}**",  #/
                 color=0x00cc99
             )
-            embed.set_footer(text=f"Dátum: {today} {allergens[i]}")
+            embed.set_footer(text=f"{allergens[i]}")
             embed_list.append(embed)
         # discord ma limit 10 embedov v embede, ak ich je viac - poslat po davkach po 10
         await ctx.send(embeds=embed_list)
