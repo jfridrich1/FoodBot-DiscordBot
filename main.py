@@ -60,7 +60,7 @@ async def testimage(ctx):
 async def eat(ctx):
     try:
         meal_names, main_prices, secondary_prices, allergens, titles = scrapping()
-        await ctx.channel.purge(limit=2)
+        await ctx.channel.purge(limit=5)
         embed_list = []
 
         today = datetime.today().strftime("%-d. %-m. %Y")
@@ -75,7 +75,7 @@ async def eat(ctx):
             emoji = get_emoji_for_title(titles[i])
             embed = discord.Embed(
                 title=f"{emoji} {titles[i]} \n{meal_names[i]}",
-                description=f"Cena: *{main_prices[i]}*  **{secondary_prices[i]}**",  #/
+                description=f"Cena: *{main_prices[i]}*  **{secondary_prices[i]}**",
                 color=0x00cc99
             )
             embed.set_footer(text=f"{allergens[i]}")
