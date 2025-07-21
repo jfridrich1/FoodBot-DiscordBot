@@ -1,1 +1,1 @@
-# EatNMeet-Bot
+# EatNMeet-DiscordBot
