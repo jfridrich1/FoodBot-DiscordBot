@@ -6,7 +6,7 @@ page_url = "https://eatandmeet.sk/"
 
 def scrapping():
     # Zoznamy na uloženie získaných dát
-    meal_names, main_prices, secondary_prices, allergens, titles = [], [], [], [], []
+    meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
     html_response = requests.get(page_url)
     soup = BeautifulSoup(html_response.text, 'html.parser')
 
@@ -40,6 +40,6 @@ def scrapping():
         main_prices.append(main_price)
         secondary_prices.append(secondary_price)
         allergens.append(allergen_span)
-        titles.append(title_text)
+        meal_categories.append(title_text.upper())
 
-    return meal_names, main_prices, secondary_prices, allergens, titles
+    return meal_names, main_prices, secondary_prices, allergens, meal_categories

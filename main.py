@@ -60,9 +60,9 @@ async def testimage(ctx):
 
 @bot.command()
 @commands.has_permissions(manage_messages=True)
-async def eat(ctx):
+async def eats(ctx):
     try:
-        meal_names, main_prices, secondary_prices, allergens, titles = scrapping()
+        meal_names, main_prices, secondary_prices, allergens, meal_categories = scrapping()
         embed_list = []
 
         # Premazanie správ pred poslaním novej spŕavy
@@ -81,16 +81,16 @@ async def eat(ctx):
 
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
-            emoji = title_emoji_mapper(titles[i])
+            emoji = title_emoji_mapper(meal_categories[i])
             embed = discord.Embed(
-                title=f"{emoji} {titles[i]} \n{meal_names[i]}",
+                title=f"{emoji} {meal_categories[i]} \n{meal_names[i]}",
                 description=f"Cena: *{main_prices[i]}*  **{secondary_prices[i]}**",
                 color=EMBED_COLOR
             )
             embed.set_footer(text=f"{allergens[i]}")
             embed_list.append(embed)
 
-        # Discord ma limit 10 embedov v embede, ak ich je viac - poslat po davkach po 10
+        # Discord má limit 10 embedov v embede, ak ich je viac, treba poslať po dávkach po 10
         # Poslanie všetkých správ
         await ctx.send(embeds=embed_list)
         
