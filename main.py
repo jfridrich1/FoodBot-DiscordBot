@@ -53,7 +53,7 @@ async def on_ready():
     # Spustenie plánovača pri štarte bota
     scheduler = AsyncIOScheduler()
     #scheduler.add_job(daily_menu, CronTrigger(hour=0, minute=0))  # každý deň o polnoci
-    scheduler.add_job(daily_menu, CronTrigger(second="*/10"))
+    scheduler.add_job(daily_menu, CronTrigger(second="*/30"))
     scheduler.start()
 
 @bot.event
@@ -83,8 +83,6 @@ async def testimage(ctx):
 @bot.command()
 @commands.has_permissions(manage_messages=True)
 async def eat(ctx):
-    # Premazanie správ pred poslaním novej spŕavy
-    await ctx.channel.purge(limit=10)
     await send_daily_menu(ctx.channel, ctx.guild.id)
 
 async def daily_menu():
@@ -103,9 +101,10 @@ async def daily_menu():
         if channel:
             await send_daily_menu(channel, guild.id)
 
-
 async def send_daily_menu(channel, guild_id):
     try:
+        # Premazanie správ pred poslaním novej spŕavy
+        await channel.purge(limit=10)
         meal_names, main_prices, secondary_prices, allergens, meal_categories = scrapping()
         config = load_config()
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
