@@ -36,18 +36,32 @@ async def send_daily_menu(channel, guild_id):
         embed_list = []
 
         # Úvodná správa
-        start_embed = discord.Embed(
             title=f"**{current_date} : Dnešné menu 😋**",
             #description=f"{current_date}",
             color=embed_color
-        )
-        embed_list.append(start_embed)
+        
+        
+        # # Úvodná správa
+        # kokotina = "Dnešné menu: "
+        # menu = f"**{current_date} **{kokotina:<130}"
+        
+        # start_embed = discord.Embed(
+        #     title=f"{menu}",
+        #     #title=f"**{current_date} : Dnešné menu 😋**",
+        #     #description=f"{current_date}",
+        #     color=embed_color
+        # )
+        # embed_list.append(start_embed)
 
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
             emoji = title_emoji_mapper(meal_categories[i])
+            category = f"{meal_categories[i]:<130}"   # fixná šírka kategórie
+            name = f"{meal_names[i]}"            # fixná šírka názvu jedla
+
             embed = discord.Embed(
-                title=f"{emoji} {meal_categories[i]} \n{meal_names[i]}",
+                title=f"{emoji} {category}\n{name}",
+                #title=f"{emoji} {meal_categories[i]} \n{meal_names[i]}", 
                 description=f"Cena: *{main_prices[i]}*  **{secondary_prices[i]}**",
                 color=embed_color
             )
