@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
 
 page_url = "https://eatandmeet.sk/"
 
