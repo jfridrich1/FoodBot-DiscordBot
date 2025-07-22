@@ -3,7 +3,7 @@ from datetime import datetime
 from scraper.scraper import scrapping
 from utils.config import load_config
 from discord.ext.commands import Bot
-from emoji_mapping import title_emoji_mapper
+from utils.emoji_mapping import title_emoji_mapper
 from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
 import discord
 
@@ -37,8 +37,8 @@ async def send_daily_menu(channel, guild_id):
 
         # Úvodná správa
         start_embed = discord.Embed(
-            title=f"**Dnešné menu**",
-            description=f"{current_date}",
+            title=f"**{current_date} : Dnešné menu**",
+            #description=f"{current_date}",
             color=embed_color
         )
         embed_list.append(start_embed)
