@@ -3,7 +3,7 @@ from datetime import datetime
 from scraper.scraper import scrapping
 from utils.config import load_config
 from discord.ext.commands import Bot
-from utils.emoji_mapping import title_emoji_mapper
+from utils.emoji_map import title_emoji_mapper
 from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
 import discord
 
