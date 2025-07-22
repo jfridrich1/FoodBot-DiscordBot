@@ -32,14 +32,9 @@ async def send_daily_menu(channel, guild_id):
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         # Získanie dnešného dátumu
-        current_date = datetime.today().strftime("%-d. %-m. %Y")
+        # current_date = datetime.today().strftime("%-d. %-m. %Y")
         embed_list = []
-
-        # Úvodná správa
-            title=f"**{current_date} : Dnešné menu 😋**",
-            #description=f"{current_date}",
-            color=embed_color
-        
+      
         
         # # Úvodná správa
         # kokotina = "Dnešné menu: "
@@ -56,8 +51,8 @@ async def send_daily_menu(channel, guild_id):
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
             emoji = title_emoji_mapper(meal_categories[i])
-            category = f"{meal_categories[i]:<130}"   # fixná šírka kategórie
-            name = f"{meal_names[i]}"            # fixná šírka názvu jedla
+            category = f"{meal_categories[i]:<130}"
+            name = f"{meal_names[i]}"
 
             embed = discord.Embed(
                 title=f"{emoji} {category}\n{name}",
@@ -67,6 +62,17 @@ async def send_daily_menu(channel, guild_id):
             )
             embed.set_footer(text=f"{allergens[i]}")
             embed_list.append(embed)
+
+        # Ping JSON role predtým ako sa pošle menu
+        role_id = config[str(guild_id)].get("role_id")
+        if role_id:
+            role = channel.guild.get_role(int(role_id))
+            if role:
+                await channel.send(f"{role.mention}")
+            else:
+                await channel.send("Rola neexistuje na serveri.")
+        else:
+            await channel.send("Role ID nie je nastavené.")
 
         # Discord má limit 10 embedov v embede, ak ich je viac, treba poslať po dávkach po 10
         # Poslanie všetkých správ
@@ -83,13 +89,27 @@ def use_commands(bot):
     # Ping príkaz
     @bot.command()
     async def ping(ctx):
-        await ctx.send('bu')
+        guild_id = str(ctx.guild.id)
+        config = load_config()
+
+        # Skontroluj, či pre daný server existujú údaje
+        if guild_id not in config or "role_id" not in config[guild_id]:
+            await ctx.send("Rola s týmto ID neexistuje na serveri.")
+            return
+
+        role_id = config[guild_id]["role_id"]
+        role = ctx.guild.get_role(int(role_id))
+
+        if role:
+            await ctx.send(f'{role.mention} bu!')
+        else:
+            await ctx.send("Rola s týmto ID neexistuje na serveri.")
 
     # "[💻 GitHub Repository](https://github.com/jfridrich1/EatNMeet-DiscordBot)"
     @bot.command()
     async def info(ctx):
         embed = discord.Embed(
-        title="ℹ️ Info o botovi",
+        title="ℹ️ Info",
         description=(
             "[🌐 Stránka Eat&Meet](https://eatandmeet.sk/)"
         ),
