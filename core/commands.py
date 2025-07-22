@@ -37,7 +37,7 @@ async def send_daily_menu(channel, guild_id):
 
         # Úvodná správa
         start_embed = discord.Embed(
-            title=f"**{current_date} : Dnešné menu**",
+            title=f"**{current_date} : Dnešné menu 😋**",
             #description=f"{current_date}",
             color=embed_color
         )
@@ -71,13 +71,13 @@ def use_commands(bot):
     async def ping(ctx):
         await ctx.send('bu')
 
+    # "[💻 GitHub Repository](https://github.com/jfridrich1/EatNMeet-DiscordBot)"
     @bot.command()
     async def info(ctx):
         embed = discord.Embed(
         title="ℹ️ Info o botovi",
         description=(
-            "[🌐 Stránka Eat&Meet](https://eatandmeet.sk/)\n"
-            "[💻 GitHub Repository](https://github.com/jfridrich1/EatNMeet-DiscordBot)"
+            "[🌐 Stránka Eat&Meet](https://eatandmeet.sk/)"
         ),
         color=0x57F287
         )
