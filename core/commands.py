@@ -71,6 +71,19 @@ def use_commands(bot):
     async def ping(ctx):
         await ctx.send('bu')
 
+    @bot.command()
+    async def info(ctx):
+        embed = discord.Embed(
+        title="ℹ️ Info o botovi",
+        description=(
+            "[🌐 Stránka Eat&Meet](https://eatandmeet.sk/)\n"
+            "[💻 GitHub Repository](https://github.com/jfridrich1/EatNMeet-DiscordBot)"
+        ),
+        color=0x57F287
+        )
+        #embed.set_footer(text="Eat&Meet bot")
+        await ctx.send(embed=embed)
+
     # Príkaz na testovanie posielania obrázku
     @bot.command()
     async def testimage(ctx):
