@@ -12,7 +12,7 @@ def use_events(bot):
         # Spustenie plánovača pri štarte bota
         scheduler = AsyncIOScheduler()
         scheduler.add_job(daily_menu, CronTrigger(hour=6, minute=55), args=[bot])  # každý deň o polnoci
-        scheduler.add_job(daily_menu, CronTrigger(hour=9, minute=10), args=[bot])  # test job
+        scheduler.add_job(daily_menu, CronTrigger(hour=11, minute=13), args=[bot])  # test job
         #scheduler.add_job(daily_menu, CronTrigger(minute="*/30"), args=[bot])
         scheduler.start()
 
