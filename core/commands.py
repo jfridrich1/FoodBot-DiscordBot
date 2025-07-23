@@ -21,14 +21,13 @@ async def daily_menu(bot: Bot):
 
         channel = bot.get_channel(channel_id)
         if channel:
-            await send_daily_menu(channel, guild.id)
+            await send_daily_menu(config, channel, guild.id)
 
-async def send_daily_menu(channel, guild_id):
+async def send_daily_menu(config, channel, guild_id):
     try:
         # Premazanie správ pred poslaním novej spŕavy
         await channel.purge(limit=10)
         meal_names, main_prices, secondary_prices, allergens, meal_categories = scrapping()
-        config = load_config()
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         # Získanie dnešného dátumu
@@ -94,7 +93,13 @@ def use_commands(bot):
 
         # Skontroluj, či pre daný server existujú údaje
         if guild_id not in config or "role_id" not in config[guild_id]:
-            await ctx.send("Rola s týmto ID neexistuje na serveri.")
+            #await ctx.send("Rola s týmto ID neexistuje na serveri.")
+            return
+        
+        expected_channel_id = config[guild_id]["channel_id"]
+
+        if ctx.channel.id != expected_channel_id:
+            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
             return
 
         role_id = config[guild_id]["role_id"]
@@ -105,29 +110,40 @@ def use_commands(bot):
         else:
             await ctx.send("Rola s týmto ID neexistuje na serveri.")
 
-    # "[💻 GitHub Repository](https://github.com/jfridrich1/EatNMeet-DiscordBot)"
     @bot.command()
     async def info(ctx):
-        embed = discord.Embed(
+        info_embed = discord.Embed(
         title="ℹ️ Info",
         description=(
             "[🌐 Stránka Eat&Meet](https://eatandmeet.sk/)"
         ),
         color=0x57F287
         )
-        #embed.set_footer(text="Eat&Meet bot")
-        await ctx.send(embed=embed)
+        await ctx.send(embed=info_embed)
 
     # Príkaz na testovanie posielania obrázku
     @bot.command()
     async def testimage(ctx):
-        url2 = "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
+        url = "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
         embed = discord.Embed(title="Test obrázok")
-        embed.set_image(url=url2)
+        embed.set_image(url=url)
         await ctx.send(embed=embed)
 
     # Príkaz na manuálne posielanie denného menu
     @bot.command()
     @commands.has_permissions(manage_messages=True)
     async def eat(ctx):
-        await send_daily_menu(ctx.channel, ctx.guild.id)
+        config = load_config()
+        guild_id = str(ctx.guild.id)
+
+        if guild_id not in config or "channel_id" not in config[guild_id]:
+            #await ctx.send("Pre tento server nie je nastavený kanál pre denné menu.")
+            return
+        
+        expected_channel_id = config[guild_id]["channel_id"]
+
+        if ctx.channel.id != expected_channel_id:
+            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
+            return
+
+        await send_daily_menu(config, ctx.channel, ctx.guild.id)
