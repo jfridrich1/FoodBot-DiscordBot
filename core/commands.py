@@ -1,6 +1,7 @@
 from discord.ext import commands
 from datetime import datetime
-from scraper.scraper import scrapping
+from scraper.scraper import enm_scrap
+from scraper.scraper import ff_page_url
 from utils.config import load_config
 from discord.ext.commands import Bot
 from utils.emoji_map import title_emoji_mapper
@@ -27,7 +28,9 @@ async def send_daily_menu(config, channel, guild_id):
     try:
         # Premazanie správ pred poslaním novej spŕavy
         await channel.purge(limit=10)
-        meal_names, main_prices, secondary_prices, allergens, meal_categories = scrapping()
+        meal_names, main_prices, secondary_prices, allergens, meal_categories = enm_scrap()
+        ff_page_url()
+        
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         # Získanie dnešného dátumu
