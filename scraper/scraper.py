@@ -5,7 +5,7 @@ from datetime import date
 
 enm_page_url = "https://eatandmeet.sk/"
 ff_page_url = "https://www.freefood.sk/menu/#fiit-food"
-druzba_page_url = "https://www.druzbacatering.sk/jedalny-listok/"
+druzba_page_url = "https://www.druzbacatering.sk/obedove-menu/"
 meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
 
 def enm_scrap():
@@ -53,4 +53,21 @@ def ff_scrap():
     formatted_date = date_today.strftime("%d.%m.%Y")
     print("Dnešný dátum:", formatted_date)
     return
-#def druzba_scrap():
+
+
+def druzba_scrap():
+    html_response = requests.get(druzba_page_url)
+    soup = BeautifulSoup(html_response.text, 'html.parser')
+
+    # Kontrola spravnosti dnesneho datumu
+    date_today = date.today()
+    formatted_date = date_today.strftime("%d.%m.%Y")
+
+    current_date = (soup.select_one(".heading-title h2")).text
+    current_date = current_date.split(' ')[1]
+
+    if (date_today != current_date):
+        raise MenuNotFoundError("Dnešné menu sa nenašlo.")
+
+    return(date_today == current_date)
+    
