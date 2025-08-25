@@ -6,11 +6,11 @@ from datetime import date
 enm_page_url = "https://eatandmeet.sk/"
 ff_page_url = "https://www.freefood.sk/menu/#fiit-food"
 druzba_page_url = "https://www.druzbacatering.sk/obedove-menu/"
-meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
+#meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
 
 def enm_scrap():
     # Zoznamy na uloženie získaných dát
-    #meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
+    meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
     html_response = requests.get(enm_page_url)
     soup = BeautifulSoup(html_response.text, 'html.parser')
 
@@ -66,8 +66,22 @@ def druzba_scrap():
     current_date = (soup.select_one(".heading-title h2")).text
     current_date = current_date.split(' ')[1]
 
-    if (date_today != current_date):
+    if (formatted_date != current_date):
         raise MenuNotFoundError("Dnešné menu sa nenašlo.")
 
-    return(date_today == current_date)
+    # Rozparsovanie tabulky
+    table = soup.find_all("tr")
+    soupMenu = table[1]
+    firstMenu = table[2]
+    secondMenu = table[3]
+    thirdMenu = table[4]
+
+    meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
+    # Rozparsovanie polievky
+    soupName = soupMenu.td.p.em.contents
+    
+
+
+
+    return(table)
     
