@@ -1,13 +1,18 @@
 import requests
 from bs4 import BeautifulSoup
 from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from datetime import date
+import re
 
-page_url = "https://eatandmeet.sk/"
+enm_page_url = "https://eatandmeet.sk/"
+ff_page_url = "https://www.freefood.sk/menu/#fiit-food"
+druzba_page_url = "https://www.druzbacatering.sk/obedove-menu/"
+#meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
 
-def scrapping():
+def enm_scrap():
     # Zoznamy na uloženie získaných dát
     meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
-    html_response = requests.get(page_url)
+    html_response = requests.get(enm_page_url)
     soup = BeautifulSoup(html_response.text, 'html.parser')
 
     # Active menu = dnešné menu
@@ -43,3 +48,83 @@ def scrapping():
         meal_categories.append(title_text.upper())
 
     return meal_names, main_prices, secondary_prices, allergens, meal_categories
+
+def druzba_scrap():
+    html_response = requests.get(druzba_page_url)
+    soup = BeautifulSoup(html_response.text, 'html.parser')
+
+    # Kontrola správnosti dnešného dátumu
+    date_today = date.today()
+    formatted_date = date_today.strftime("%d.%m.%Y")
+
+    current_date = soup.select_one(".heading-title h2").get_text(strip=True)
+    current_date = current_date.split(" ")[1]
+
+    if formatted_date != current_date:
+        raise MenuNotFoundError("Dnešné menu sa nenašlo.")
+
+    # Rozparsovanie tabuľky (všetky riadky)
+    rows = soup.find_all("tr")
+
+    meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
+
+    for row in rows[1:]:  # preskočíme header
+        cols = row.find_all("td")
+        if not cols:
+            continue  # prázdny riadok
+
+        # jedlo (ľavý stĺpec)
+        meal_text = cols[0].get_text(" ", strip=True)  # spojí texty do jedného stringu
+        # cena (pravý stĺpec)
+        if len(cols) > 1:
+            price_text = cols[1].get_text(" ", strip=True)
+        else:
+            price_text = ""
+
+        # Parsovanie
+        # kategória (Polievka, I., II., III.)
+        if meal_text.startswith("Polievka"):
+            category = "Polievka"
+        elif meal_text.startswith("I."):
+            category = "I."
+        elif meal_text.startswith("II."):
+            category = "II."
+        elif meal_text.startswith("III."):
+            category = "III."
+        else:
+            category = ""
+
+        # alergény v zátvorkách
+        allergen_match = re.search(r"\(([\d,]+)\)", meal_text)
+        if allergen_match:
+            allergen_list = f"({allergen_match.group(1)})"
+        else:
+            allergen_list = ""
+
+        # názov jedla (očistený o kategóriu a alergény)
+        meal_clean = re.sub(r"^(Polievka.*?|I\.|II\.|III\.)", "", meal_text).strip()
+        meal_clean = re.sub(r"\([\d,]+\)", "", meal_clean).strip()
+
+        # ceny
+        price_main, price_secondary = None, None
+        prices = re.findall(r"\d+,\d+€", price_text)
+        if prices:
+            if len(prices) >= 1:
+                price_main = prices[0]
+            if len(prices) >= 2:
+                price_secondary = prices[1]
+
+        # "v cene menu"
+        elif price_text:
+            price_main = price_text.strip()
+            price_secondary = price_text.strip()
+
+        # filter na prazdny element
+        if category is not "":
+            meal_categories.append(category)
+            meal_names.append(meal_clean)
+            allergens.append(allergen_list)
+            main_prices.append(price_main)
+            secondary_prices.append(price_secondary)
+
+    return meal_categories, meal_names, allergens, main_prices, secondary_prices

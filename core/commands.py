@@ -1,6 +1,8 @@
 from discord.ext import commands
 from datetime import datetime
-from scraper.scraper import scrapping
+from scraper.scraper import enm_scrap
+from scraper.scraper import druzba_scrap
+from scraper.scraper import ff_page_url
 from utils.config import load_config
 from discord.ext.commands import Bot
 from utils.emoji_map import title_emoji_mapper
@@ -26,26 +28,12 @@ async def daily_menu(bot: Bot):
 async def send_daily_menu(config, channel, guild_id):
     try:
         # Premazanie správ pred poslaním novej spŕavy
-        await channel.purge(limit=10)
-        meal_names, main_prices, secondary_prices, allergens, meal_categories = scrapping()
+        #await channel.purge(limit=10)
+        meal_names, main_prices, secondary_prices, allergens, meal_categories = enm_scrap()
+        
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
-        # Získanie dnešného dátumu
-        # current_date = datetime.today().strftime("%-d. %-m. %Y")
         embed_list = []
-      
-        
-        # # Úvodná správa
-        # kokotina = "Dnešné menu: "
-        # menu = f"**{current_date} **{kokotina:<130}"
-        
-        # start_embed = discord.Embed(
-        #     title=f"{menu}",
-        #     #title=f"**{current_date} : Dnešné menu 😋**",
-        #     #description=f"{current_date}",
-        #     color=embed_color
-        # )
-        # embed_list.append(start_embed)
 
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
@@ -74,6 +62,50 @@ async def send_daily_menu(config, channel, guild_id):
             await channel.send("Role ID nie je nastavené.")
 
         # Discord má limit 10 embedov v embede, ak ich je viac, treba poslať po dávkach po 10
+        # Poslanie všetkých správ
+        await channel.send(embeds=embed_list)
+        
+    except MenuNotFoundError as e:
+        await channel.send("Nepodarilo sa nájsť dnešné menu.")
+    except MenuBodyNotFoundError as e:
+        await channel.send("Našlo sa menu, nepodarilo sa nájst položky z menu.")
+    except Exception as e:
+        await channel.send(f"Neočakávaná chyba: {type(e).__name__}: {e}")
+
+async def send_druzba_menu(config, channel, guild_id):
+    try:
+        #await channel.purge(limit=6)
+        meal_categories, meal_names, allergens, main_prices, secondary_prices = druzba_scrap()
+        
+        embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
+
+        embed_list = []
+
+        # Správy o jednotlivých jedlách
+        for i in range(len(meal_names)):
+            name = f"{meal_names[i]}"
+            f_secondary_price = f"/ *{secondary_prices[i]}*"
+
+            embed = discord.Embed(
+                title=f"{meal_categories[i]} {name}",
+                description=f"Cena: **{main_prices[i]}** {f_secondary_price}",
+                color=embed_color
+            )
+            embed.set_footer(text=f"{allergens[i]}")
+            embed_list.append(embed)
+
+        # Ping JSON role predtým ako sa pošle menu
+        role_id = config[str(guild_id)].get("role_id")
+        if role_id:
+            role = channel.guild.get_role(int(role_id))
+            if role:
+                await channel.send(f"{role.mention}")
+            else:
+                await channel.send("Rola neexistuje na serveri.")
+        else:
+            await channel.send("Role ID nie je nastavené.")
+
+        # # Discord má limit 10 embedov v embede, ak ich je viac, treba poslať po dávkach po 10
         # Poslanie všetkých správ
         await channel.send(embeds=embed_list)
         
@@ -147,3 +179,40 @@ def use_commands(bot):
             return
 
         await send_daily_menu(config, ctx.channel, ctx.guild.id)
+
+    @bot.command()
+    @commands.has_permissions(manage_messages=True)
+    async def druzba(ctx):
+        config = load_config()
+        guild_id = str(ctx.guild.id)
+
+        if guild_id not in config or "channel_id" not in config[guild_id]:
+            #await ctx.send("Pre tento server nie je nastavený kanál pre denné menu.")
+            return
+        
+        expected_channel_id = config[guild_id]["channel_id"]
+
+        if ctx.channel.id != expected_channel_id:
+            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
+            return
+
+        await send_druzba_menu(config, ctx.channel, ctx.guild.id)
+
+    @bot.command()
+    @commands.has_permissions(manage_messages=True)
+    async def mnam(ctx):
+        config = load_config()
+        guild_id = str(ctx.guild.id)
+
+        if guild_id not in config or "channel_id" not in config[guild_id]:
+            #await ctx.send("Pre tento server nie je nastavený kanál pre denné menu.")
+            return
+        
+        expected_channel_id = config[guild_id]["channel_id"]
+
+        if ctx.channel.id != expected_channel_id:
+            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
+            return
+        
+        await send_daily_menu(config, ctx.channel, ctx.guild.id)
+        await send_druzba_menu(config, ctx.channel, ctx.guild.id)

@@ -5,7 +5,6 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-
 from core.commands import use_commands
 from core.events import use_events
 
