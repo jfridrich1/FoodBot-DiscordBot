@@ -39,6 +39,11 @@ async def send_enm_menu(config, channel, guild_id):
 
         embed_list = []
 
+        start_embed = discord.Embed(
+            title = "Eat&Meet"
+        )
+        embed_list.append(start_embed)
+
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
             emoji = title_emoji_mapper(meal_categories[i])
@@ -58,10 +63,10 @@ async def send_enm_menu(config, channel, guild_id):
         role_id = config[str(guild_id)].get("role_id")
         if role_id:
             role = channel.guild.get_role(int(role_id))
-            if role:
-                await channel.send(f"{role.mention}")
-            else:
-                await channel.send("Rola neexistuje na serveri.")
+            #if role:
+                #await channel.send(f"{role.mention}")
+            #else:
+                #await channel.send("Rola neexistuje na serveri.")
         else:
             await channel.send("Role ID nie je nastavené.")
 
@@ -85,6 +90,11 @@ async def send_druzba_menu(config, channel, guild_id):
 
         embed_list = []
 
+        start_embed = discord.Embed(
+            title = "Druzba"
+        )
+        embed_list.append(start_embed)
+
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
             name = f"{meal_names[i]}"
@@ -102,10 +112,10 @@ async def send_druzba_menu(config, channel, guild_id):
         role_id = config[str(guild_id)].get("role_id")
         if role_id:
             role = channel.guild.get_role(int(role_id))
-            if role:
-                await channel.send(f"{role.mention}")
-            else:
-                await channel.send("Rola neexistuje na serveri.")
+            #if role:
+                #await channel.send(f"{role.mention}")
+            #else:
+                #await channel.send("Rola neexistuje na serveri.")
         else:
             await channel.send("Role ID nie je nastavené.")
 
@@ -127,6 +137,11 @@ async def send_fiitfood_menu(config, channel, guild_id):
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         embed_list = []
+
+        start_embed = discord.Embed(
+            title = "FiitFood"
+        )
+        embed_list.append(start_embed)
 
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
