@@ -250,13 +250,11 @@ def use_commands(bot):
         guild_id = str(ctx.guild.id)
 
         if guild_id not in config or "channel_id" not in config[guild_id]:
-            #await ctx.send("Pre tento server nie je nastavený kanál pre denné menu.")
             return
         
         expected_channel_id = config[guild_id]["channel_id"]
 
         if ctx.channel.id != expected_channel_id:
-            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
             return
 
         await send_fiitfood_menu(config, ctx.channel, ctx.guild.id)
