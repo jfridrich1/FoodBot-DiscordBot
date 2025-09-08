@@ -1,8 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
 from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
-from datetime import date
-import re
 
 enm_page_url = "https://eatandmeet.sk/"
 
@@ -15,12 +13,12 @@ def enmScrap():
     # Active menu = dnešné menu
     active_menu_div = soup.select_one("div.tab-pane.fade.active.in")
     if not active_menu_div:
-        raise MenuNotFoundError("Dnešné menu sa nenašlo.")
+        raise MenuNotFoundError("Dnešné menu sa nenašlo. (EM)")
     
     # Vyberanie položiek z dnešného menu
     items_div = active_menu_div.select("div.menu-body.menu-left")
     if not items_div:
-        raise MenuBodyNotFoundError("Nenašli sa položky z menu.")
+        raise MenuBodyNotFoundError("Nenašli sa položky z menu. (EM)")
     
     for item in items_div:
         # Získanie názvov jedák z <p>

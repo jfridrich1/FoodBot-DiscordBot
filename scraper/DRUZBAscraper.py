@@ -1,8 +1,8 @@
+import re
 import requests
 from bs4 import BeautifulSoup
 from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
 from datetime import date
-import re
 
 druzba_page_url = "https://www.druzbacatering.sk/obedove-menu/"
 
@@ -19,7 +19,7 @@ def druzbaScrap():
     current_date = current_date.split(" ")[1]
 
     if formatted_date != current_date:
-        raise MenuNotFoundError("Dnešné menu sa nenašlo.")
+        raise MenuNotFoundError("Dnešné menu sa nenašlo. (D)")
 
     # Rozparsovanie tabuľky (všetky riadky)
     rows = soup.find_all("tr")

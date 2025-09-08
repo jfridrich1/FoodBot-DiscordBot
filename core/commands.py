@@ -1,15 +1,17 @@
+import discord
 from discord.ext import commands
-from datetime import datetime
+from discord.ext.commands import Bot
+
+from utils.config import load_config
+from utils.emoji_map import title_emoji_mapper
+
+from scraper.accessControl import accessCheck
 from scraper.ENMscraper import enmScrap
 from scraper.DRUZBAscraper import druzbaScrap
 from scraper.FIITFOODscraper import fiitfoodScrap
-from utils.config import load_config
-from discord.ext.commands import Bot
-from utils.emoji_map import title_emoji_mapper
-from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
-import discord
+from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError, InvalidGuildError, InvalidChannelError
 
-async def daily_menu(bot: Bot):
+async def daily_update(bot: Bot):
     config = load_config()
     for guild in bot.guilds:
         guild_id = str(guild.id)
@@ -23,9 +25,11 @@ async def daily_menu(bot: Bot):
 
         channel = bot.get_channel(channel_id)
         if channel:
-            await send_daily_menu(config, channel, guild.id)
+            await send_enm_menu(config, channel, guild.id)
+            await send_druzba_menu(config, channel, guild.id)
+            await send_fiitfood_menu(config, channel, guild.id)
 
-async def send_daily_menu(config, channel, guild_id):
+async def send_enm_menu(config, channel, guild_id):
     try:
         # Premazanie správ pred poslaním novej spŕavy
         await channel.purge(limit=10)
@@ -157,9 +161,6 @@ async def send_fiitfood_menu(config, channel, guild_id):
         await channel.send("Našlo sa menu, nepodarilo sa nájst položky z menu.")
     except Exception as e:
         await channel.send(f"Neočakávaná chyba: {type(e).__name__}: {e}")
-    
-    #await channel.purge(limit=2)
-    #await channel.send([meal_categories, meal_names, main_prices, allergens])
 
 def use_commands(bot):
     # Ping príkaz
@@ -170,13 +171,11 @@ def use_commands(bot):
 
         # Skontroluj, či pre daný server existujú údaje
         if guild_id not in config or "role_id" not in config[guild_id]:
-            #await ctx.send("Rola s týmto ID neexistuje na serveri.")
             return
         
         expected_channel_id = config[guild_id]["channel_id"]
 
         if ctx.channel.id != expected_channel_id:
-            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
             return
 
         role_id = config[guild_id]["role_id"]
@@ -192,7 +191,9 @@ def use_commands(bot):
         info_embed = discord.Embed(
         title="ℹ️ Info",
         description=(
-            "[🌐 Stránka Eat&Meet](https://eatandmeet.sk/)"
+            "[Stránka Eat&Meet](https://eatandmeet.sk/)" \
+            "[Stránka Družby](https://www.druzbacatering.sk)" \
+            "[Stránka FiitFood(http://www.freefood.sk/menu/#fiit-food)]"
         ),
         color=0x57F287
         )
@@ -211,19 +212,13 @@ def use_commands(bot):
     @commands.has_permissions(manage_messages=True)
     async def eat(ctx):
         config = load_config()
-        guild_id = str(ctx.guild.id)
-
-        if guild_id not in config or "channel_id" not in config[guild_id]:
-            #await ctx.send("Pre tento server nie je nastavený kanál pre denné menu.")
+        try: 
+            accessCheck(config, ctx)
+            await send_enm_menu(config, ctx.channel, ctx.guild.id)
+        except InvalidGuildError as e:
             return
-        
-        expected_channel_id = config[guild_id]["channel_id"]
-
-        if ctx.channel.id != expected_channel_id:
-            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
+        except InvalidChannelError as e:
             return
-
-        await send_daily_menu(config, ctx.channel, ctx.guild.id)
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
@@ -232,13 +227,11 @@ def use_commands(bot):
         guild_id = str(ctx.guild.id)
 
         if guild_id not in config or "channel_id" not in config[guild_id]:
-            #await ctx.send("Pre tento server nie je nastavený kanál pre denné menu.")
             return
         
         expected_channel_id = config[guild_id]["channel_id"]
 
         if ctx.channel.id != expected_channel_id:
-            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
             return
 
         await send_druzba_menu(config, ctx.channel, ctx.guild.id)
@@ -266,15 +259,13 @@ def use_commands(bot):
         guild_id = str(ctx.guild.id)
 
         if guild_id not in config or "channel_id" not in config[guild_id]:
-            #await ctx.send("Pre tento server nie je nastavený kanál pre denné menu.")
             return
         
         expected_channel_id = config[guild_id]["channel_id"]
 
         if ctx.channel.id != expected_channel_id:
-            #await ctx.send("Tento príkaz je možné použiť iba v kanáli určenom pre denné menu.")
             return
         
-        await send_daily_menu(config, ctx.channel, ctx.guild.id)
+        await send_enm_menu(config, ctx.channel, ctx.guild.id)
         await send_druzba_menu(config, ctx.channel, ctx.guild.id)
         await send_fiitfood_menu(config, ctx.channel, ctx.guild.id)

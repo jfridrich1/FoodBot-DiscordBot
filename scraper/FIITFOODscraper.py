@@ -1,17 +1,17 @@
+import re
 import requests
 from bs4 import BeautifulSoup
-#from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
 from datetime import date
-import re
 
 fiitfood_page_url = "http://www.freefood.sk/menu/#fiit-food"
 
 def fiitfoodScrap():
-    meal_names, main_prices, secondary_prices, allergens, meal_categories = [], [], [], [], []
+    meal_names, main_prices, allergens, meal_categories = [], [], [], []
     html_response = requests.get(fiitfood_page_url)
     soup = BeautifulSoup(html_response.text, 'html.parser')
 
-     # Kontrola správnosti dnešného dátumu
+    # Kontrola správnosti dnešného dátumu
     date_today = date.today()
     formatted_date = f"{date_today.day}.{date_today.month}.{date_today.year}"
 
@@ -22,12 +22,12 @@ def fiitfoodScrap():
     # nájdi dnešný deň podľa span.day-title
     today_block = daily_offer.find("span", class_="day-title", string=lambda t: t and formatted_date in t)
     if not today_block:
-        return []
+        raise MenuNotFoundError(("Dnešné menu sa nenašlo. (FF)"))
 
     # nájdi ul.day-offer patriaci k tomuto dňu
     offer_block = today_block.find_next("ul", class_="day-offer")
     if not offer_block:
-        return []
+        raise MenuBodyNotFoundError("Nenašli sa položky z menu. (FF)")
     
     for li in offer_block.find_all("li"):
         meal_category = li.find("span", class_="brand").get_text()

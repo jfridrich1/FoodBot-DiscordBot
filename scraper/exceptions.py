@@ -6,3 +6,9 @@ class MenuNotFoundError(ScrappingError):
 
 class MenuBodyNotFoundError(ScrappingError):
     """Exception: missing menu files."""
+
+class InvalidGuildError(ScrappingError):
+    """Exception: guild not in config"""
+
+class InvalidChannelError(ScrappingError):
+    """Exception: channel not in config"""
