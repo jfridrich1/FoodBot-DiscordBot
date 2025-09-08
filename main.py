@@ -8,7 +8,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from core.commands import use_commands
 from core.events import use_events
 
-#EMBED_COLOR = 0xffe28a
+#EMBED_COLOR = 0xffe28a-
 load_dotenv()
 
 # Priradenie práv botovi
