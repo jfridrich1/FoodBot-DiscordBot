@@ -202,7 +202,7 @@ def use_commands(bot):
     @bot.command()
     async def testimage(ctx):
         url = "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
-        embed = discord.Embed(title="Test obrázok")
+        embed = discord.Embed(title="Test obrázok :)")
         embed.set_image(url=url)
         await ctx.send(embed=embed)
 
