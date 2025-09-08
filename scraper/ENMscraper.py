@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from utils.exceptions import MenuNotFoundError, MenuBodyNotFoundError
 
 enm_page_url = "https://eatandmeet.sk/"
 

@@ -1,7 +1,7 @@
 import re
 import requests
 from bs4 import BeautifulSoup
-from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from utils.exceptions import MenuNotFoundError, MenuBodyNotFoundError
 from datetime import date
 
 druzba_page_url = "https://www.druzbacatering.sk/obedove-menu/"

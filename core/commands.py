@@ -2,14 +2,14 @@ import discord
 from discord.ext import commands
 from discord.ext.commands import Bot
 
-from utils.config import load_config
-from utils.emoji_map import title_emoji_mapper
-
-from scraper.accessControl import accessCheck
 from scraper.ENMscraper import enmScrap
 from scraper.DRUZBAscraper import druzbaScrap
 from scraper.FIITFOODscraper import fiitfoodScrap
-from scraper.exceptions import MenuNotFoundError, MenuBodyNotFoundError, InvalidGuildError, InvalidChannelError
+
+from utils.config import load_config
+from utils.emoji_map import title_emoji_mapper
+from utils.accessControl import accessCheck
+from utils.exceptions import MenuNotFoundError, MenuBodyNotFoundError, InvalidGuildError, InvalidChannelError
 
 async def daily_update(bot: Bot):
     config = load_config()
@@ -32,7 +32,7 @@ async def daily_update(bot: Bot):
 async def send_enm_menu(config, channel, guild_id):
     try:
         # Premazanie správ pred poslaním novej spŕavy
-        await channel.purge(limit=10)
+        #await channel.purge(limit=10)
         meal_names, main_prices, secondary_prices, allergens, meal_categories = enmScrap()
         
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
@@ -191,9 +191,7 @@ def use_commands(bot):
         info_embed = discord.Embed(
         title="ℹ️ Info",
         description=(
-            "[Stránka Eat&Meet](https://eatandmeet.sk/)" \
-            "[Stránka Družby](https://www.druzbacatering.sk)" \
-            "[Stránka FiitFood(http://www.freefood.sk/menu/#fiit-food)]"
+            "[Stránka Eat&Meet](https://eatandmeet.sk/)\n[Stránka Družby](https://www.druzbacatering.sk)\n[Stránka FiitFood](http://www.freefood.sk/menu/#fiit-food)"
         ),
         color=0x57F287
         )
@@ -203,7 +201,7 @@ def use_commands(bot):
     @bot.command()
     async def testimage(ctx):
         url = "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
-        embed = discord.Embed(title="Test obrázok :)))")
+        embed = discord.Embed(title="Test obrázok")
         embed.set_image(url=url)
         await ctx.send(embed=embed)
 
@@ -219,53 +217,45 @@ def use_commands(bot):
             return
         except InvalidChannelError as e:
             return
+            #await ctx.channel.send("zly kanal")
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
     async def druzba(ctx):
         config = load_config()
-        guild_id = str(ctx.guild.id)
-
-        if guild_id not in config or "channel_id" not in config[guild_id]:
+        try: 
+            accessCheck(config, ctx)
+            await send_druzba_menu(config, ctx.channel, ctx.guild.id)
+        except InvalidGuildError as e:
             return
-        
-        expected_channel_id = config[guild_id]["channel_id"]
-
-        if ctx.channel.id != expected_channel_id:
+        except InvalidChannelError as e:
             return
-
-        await send_druzba_menu(config, ctx.channel, ctx.guild.id)
+            #await ctx.channel.send("zly kanal")
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
     async def ff(ctx):
         config = load_config()
-        guild_id = str(ctx.guild.id)
-
-        if guild_id not in config or "channel_id" not in config[guild_id]:
+        try: 
+            accessCheck(config, ctx)
+            await send_fiitfood_menu(config, ctx.channel, ctx.guild.id)
+        except InvalidGuildError as e:
             return
-        
-        expected_channel_id = config[guild_id]["channel_id"]
-
-        if ctx.channel.id != expected_channel_id:
+        except InvalidChannelError as e:
             return
-
-        await send_fiitfood_menu(config, ctx.channel, ctx.guild.id)
+            #await ctx.channel.send("zly kanal")
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
     async def mnam(ctx):
         config = load_config()
-        guild_id = str(ctx.guild.id)
-
-        if guild_id not in config or "channel_id" not in config[guild_id]:
+        try: 
+            accessCheck(config, ctx)
+            await send_enm_menu(config, ctx.channel, ctx.guild.id)
+            await send_druzba_menu(config, ctx.channel, ctx.guild.id)
+            await send_fiitfood_menu(config, ctx.channel, ctx.guild.id)
+        except InvalidGuildError as e:
             return
-        
-        expected_channel_id = config[guild_id]["channel_id"]
-
-        if ctx.channel.id != expected_channel_id:
+        except InvalidChannelError as e:
             return
-        
-        await send_enm_menu(config, ctx.channel, ctx.guild.id)
-        await send_druzba_menu(config, ctx.channel, ctx.guild.id)
-        await send_fiitfood_menu(config, ctx.channel, ctx.guild.id)
+            #await ctx.channel.send("zly kanal")

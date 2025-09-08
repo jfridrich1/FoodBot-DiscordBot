@@ -1,4 +1,4 @@
-from scraper.exceptions import InvalidGuildError, InvalidChannelError
+from utils.exceptions import InvalidGuildError, InvalidChannelError
 
 def accessCheck(config, ctx):
     guild_id = str(ctx.guild.id)
