@@ -137,17 +137,17 @@ async def send_fiitfood_menu(config, channel, guild_id):
                 description=f"Cena: **{main_prices[i]}**",
                 color=embed_color
             )
-            embed.set_footer(text=f"{allergens[i]}")
+            embed.set_footer(text=f"({allergens[i]})")
             embed_list.append(embed)
 
         # Ping JSON role predtým ako sa pošle menu
         role_id = config[str(guild_id)].get("role_id")
         if role_id:
             role = channel.guild.get_role(int(role_id))
-            if role:
-                await channel.send(f"{role.mention}")
-            else:
-                await channel.send("Rola neexistuje na serveri.")
+            #if role:
+                #await channel.send(f"{role.mention}")
+            #else:
+                #await channel.send("Rola neexistuje na serveri.")
         else:
             await channel.send("Role ID nie je nastavené.")
 
@@ -249,6 +249,7 @@ def use_commands(bot):
     @commands.has_permissions(manage_messages=True)
     async def mnam(ctx):
         config = load_config()
+        await ctx.channel.purge(limit=4)
         try: 
             accessCheck(config, ctx)
             await send_enm_menu(config, ctx.channel, ctx.guild.id)

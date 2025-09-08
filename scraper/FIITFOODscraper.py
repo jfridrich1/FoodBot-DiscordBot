@@ -43,7 +43,7 @@ def fiitfoodScrap():
             allergens.append(match.group(1))
             meal_name = meal_name.replace(match.group(0), "").strip()
             if "(V)" in match.group(0):
-                allergens[-1] += ",(V)"
+                allergens[-1] += ",V"
         else:
             allergens.append("")
 
