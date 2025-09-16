@@ -54,7 +54,11 @@ async def send_enm_menu(config, channel, guild_id):
             # embed.set_footer(text=f"{allergens[i]}")
             # embed_list.append(embed)
 
-            string_embed += f"{emoji} **{category}**\n{name}\nCena: *{main_prices[i]}*  **{secondary_prices[i]}**\n({allergens[i]})\n\n"
+            string_embed += f"{emoji} **{category}**\n{name}\nCena: *{main_prices[i]}*  **{secondary_prices[i]}**\n"
+            if allergens[i] != "":
+                string_embed += f"{allergens[i]}\n\n"
+            else:
+                string_embed += "\n"
         enm_embed = discord.Embed(
             title="Eat&Meet",
             description=string_embed,
@@ -75,7 +79,7 @@ async def send_enm_menu(config, channel, guild_id):
 
         # Discord má limit 10 embedov v embede, ak ich je viac, treba poslať po dávkach po 10
         # Poslanie všetkých správ
-        await channel.send(embeds=enm_embed)
+        await channel.send(embed=enm_embed)
         
     except MenuNotFoundError as e:
         await channel.send("Nepodarilo sa nájsť dnešné menu.")
@@ -91,25 +95,33 @@ async def send_druzba_menu(config, channel, guild_id):
         
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
-        embed_list = []
-
-        start_embed = discord.Embed(
-            title = "Druzba"
-        )
-        embed_list.append(start_embed)
+        string_embed = ""
 
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
+            emoji = title_emoji_mapper(meal_categories[i])
             name = f"{meal_names[i]}"
             f_secondary_price = f"/ *{secondary_prices[i]}*"
 
-            embed = discord.Embed(
-                title=f"{meal_categories[i]} {name}",
-                description=f"Cena: **{main_prices[i]}** {f_secondary_price}",
-                color=embed_color
-            )
-            embed.set_footer(text=f"{allergens[i]}")
-            embed_list.append(embed)
+            # embed = discord.Embed(
+            #     title=f"{meal_categories[i]} {name}",
+            #     description=f"Cena: **{main_prices[i]}** {f_secondary_price}",
+            #     color=embed_color
+            # )
+            # embed.set_footer(text=f"{allergens[i]}")
+            # embed_list.append(embed)
+            string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: **{main_prices[i]}** {f_secondary_price}\n"
+            if allergens[i] != "":
+                string_embed += f"{allergens[i]}\n\n"
+            else:
+                string_embed += "\n"
+            
+        druzba_embed = discord.Embed(
+            title="Družba",
+            description=string_embed,
+            color=embed_color,
+            url="https://www.druzbacatering.sk/jedalny-listok"
+        )
 
         # Ping JSON role predtým ako sa pošle menu
         role_id = config[str(guild_id)].get("role_id")
@@ -124,7 +136,7 @@ async def send_druzba_menu(config, channel, guild_id):
 
         # # Discord má limit 10 embedov v embede, ak ich je viac, treba poslať po dávkach po 10
         # Poslanie všetkých správ
-        await channel.send(embeds=embed_list)
+        await channel.send(embed=druzba_embed)
         
     except MenuNotFoundError as e:
         await channel.send("Nepodarilo sa nájsť dnešné menu.")
@@ -139,24 +151,33 @@ async def send_fiitfood_menu(config, channel, guild_id):
 
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
-        embed_list = []
-
-        start_embed = discord.Embed(
-            title = "FiitFood"
-        )
-        embed_list.append(start_embed)
+        string_embed = ""
 
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
+            emoji = title_emoji_mapper(meal_categories[i])
             name = f"{meal_names[i]}"
 
-            embed = discord.Embed(
-                title=f"{meal_categories[i]} {name}",
-                description=f"Cena: **{main_prices[i]}**",
-                color=embed_color
-            )
-            embed.set_footer(text=f"({allergens[i]})")
-            embed_list.append(embed)
+            # embed = discord.Embed(
+            #     title=f"{meal_categories[i]} {name}",
+            #     description=f"Cena: **{main_prices[i]}**",
+            #     color=embed_color
+            # )
+            # embed.set_footer(text=f"({allergens[i]})")
+            # embed_list.append(embed)
+
+            string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: **{main_prices[i]}**\n"
+            if allergens[i] != "":
+                string_embed += f"({allergens[i]})\n\n" 
+            else:
+                string_embed += "\n"
+
+        fiitfood_embed = discord.Embed(
+            title="FiitFood",
+            description=string_embed,
+            color=embed_color,
+            url="http://www.freefood.sk/menu/#fiit-food"
+        )
 
         # Ping JSON role predtým ako sa pošle menu
         role_id = config[str(guild_id)].get("role_id")
@@ -171,8 +192,8 @@ async def send_fiitfood_menu(config, channel, guild_id):
 
         # # Discord má limit 10 embedov v embede, ak ich je viac, treba poslať po dávkach po 10
         # Poslanie všetkých správ
-        await channel.send(embeds=embed_list)
-        
+        await channel.send(embed=fiitfood_embed)
+
     except MenuNotFoundError as e:
         await channel.send("Nepodarilo sa nájsť dnešné menu.")
     except MenuBodyNotFoundError as e:

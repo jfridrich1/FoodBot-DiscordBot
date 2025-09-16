@@ -58,7 +58,7 @@ def druzbaScrap():
             allergen_list = ""
 
         # názov jedla (očistený o kategóriu a alergény)
-        meal_clean = re.sub(r"^(Polievka.*?|I\.|II\.|III\.)", "", meal_text).strip()
+        meal_clean = re.sub(r"^(Polievka:.*?|I\.|II\.|III\.)", "", meal_text).strip()
         meal_clean = re.sub(r"\([\d,]+\)", "", meal_clean).strip()
 
         # ceny

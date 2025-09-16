@@ -4,7 +4,14 @@ emoji_map = {
     "MENU": "🍽",
     "MÚČNE": "🥞",
     "VEGETARIÁNSKE": "🥦",
-    "ŠALÁT": "🥗"
+    "ŠALÁT": "🥗",
+    "I.": "🍽",
+    "II.": "🍽",
+    "III.": "🍽",
+    "P.": "🥣",
+    "1.": "🍽",
+    "2.": "🍽",
+    "3.": "🍽"
 }
 
 # Funkcia na mapovanie kategórie k príslušnému emoji
