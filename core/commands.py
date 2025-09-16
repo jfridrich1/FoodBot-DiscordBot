@@ -39,10 +39,10 @@ async def send_enm_menu(config, channel, guild_id):
 
         embed_list = []
 
-        start_embed = discord.Embed(
-            title = "Eat&Meet"
-        )
-        embed_list.append(start_embed)
+        #start_embed = discord.Embed(
+            #title = "Eat&Meet"
+        #)
+        #embed_list.append(start_embed)
 
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
@@ -63,8 +63,8 @@ async def send_enm_menu(config, channel, guild_id):
         role_id = config[str(guild_id)].get("role_id")
         if role_id:
             role = channel.guild.get_role(int(role_id))
-            #if role:
-                #await channel.send(f"{role.mention}")
+            if role:
+                await channel.send(f"{role.mention}")
             #else:
                 #await channel.send("Rola neexistuje na serveri.")
         else:

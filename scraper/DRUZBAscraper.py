@@ -65,10 +65,10 @@ def druzbaScrap():
         price_main, price_secondary = None, None
         prices = re.findall(r"\d+,\d+€", price_text)
         if prices:
-            if len(prices) >= 1:
-                price_main = prices[0]
-            if len(prices) >= 2:
-                price_secondary = prices[1]
+            if len(prices)>=1:
+                price_main=prices[0]
+            if len(prices)>=2:
+                price_secondary=prices[1]
 
         # "v cene menu"
         elif price_text:
