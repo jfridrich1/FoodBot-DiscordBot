@@ -10,15 +10,15 @@ Discord bot, ktorý každý deň zverejňuje denné menu z Eat&Meet, Družba Can
 ## Setup
 ### 1. Vytvorenie Discord aplikácie
 Aby bot fungoval, je potrebné najprv vytvoriť aplikáciu a bota na [Discord Developer Portal](https://discord.com/developers/applications):
-    1. Prihlás sa na [discord.dev](https://discord.com/developers/applications)
-    2. Klikni **New Application** → pomenuj svoju aplikáciu
-    3. V sekcii **Bot** vytvor nového bota
-    4. Skopíruj si **Bot Token**, ten sa vloží do svojho projektu ako environment premennú
-    5. Vygeneruj **OAuth2 Invite Link** s oprávneniami:
-        * `Send Messages`
-        * `Manage Messages`
-        * `Mention Everyone`
-        * prípadne `Administrator` pre testovanie
+1. Prihlás sa na [discord.dev](https://discord.com/developers/applications)
+2. Klikni **New Application** → pomenuj svoju aplikáciu
+3. V sekcii **Bot** vytvor nového bota
+4. Skopíruj si **Bot Token**, ten sa vloží do svojho projektu ako environment premennú
+5. Vygeneruj **OAuth2 Invite Link** s oprávneniami:
+    * `Send Messages`
+    * `Manage Messages`
+    * `Mention Everyone`
+    * prípadne `Administrator` pre testovanie
 ### 2. Lokálne spustenie
 1. Naklonuj repozitár:
 ```
