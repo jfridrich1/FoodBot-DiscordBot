@@ -1,13 +1,58 @@
 # FoodBot-DiscordBot
-Discord bot, ktorý každý deň zverejňuje denné menu z Eat&Meet, Družba Cantina a FiitFood. Menu sú poslané správou do kanálov, ktoré sú nakonfiguované v config súbore. Taktiež sa dá nakonfigurovať aj rola, ktorá sa pingne pri poslaní denného menu, ako aj farba správy
+Discord bot, ktorý každý deň zverejňuje denné menu z Eat&Meet, Družba Cantina a FiitFood. Menu sú poslané správou do kanálov, ktoré sú nakonfiguované v config súbore. Taktiež sa dá nakonfigurovať aj rola, ktorá sa pingne pri poslaní denného menu, ako aj farba správy.
 ## Ukážka
 
-## Features
-* Automatické posielanie denného menu z 3 webov
-* Konfigurácia kanálov, rolí a farby správ
-* Možnosť spustiť manuálne refresh
-* Plánované spúšťanie každý deň
-
+## Funkcie
+* 📌 Automatické posielanie denného menu z 3 webov
+* ⚙️ Konfigurácia kanálov, rolí a farby správ
+* 🔄 Možnosť spustiť manuálne refresh
+* ⏰ Plánované spúšťanie každý deň
+## Setup
+### 1. Vytvorenie Discord aplikácie
+Aby bot fungoval, je potrebné najprv vytvoriť aplikáciu a bota na [Discord Developer Portal](https://discord.com/developers/applications):
+    1. Prihlás sa na [discord.dev](https://discord.com/developers/applications)
+    2. Klikni **New Application** → pomenuj svoju aplikáciu
+    3. V sekcii **Bot** vytvor nového bota
+    4. Skopíruj si **Bot Token**, ten sa vloží do svojho projektu ako environment premennú
+    5. Vygeneruj **OAuth2 Invite Link** s oprávneniami:
+        * `Send Messages`
+        * `Manage Messages`
+        * `Mention Everyone`
+        * prípadne `Administrator` pre testovanie
+### 2. Lokálne spustenie
+1. Naklonuj repozitár:
+```
+git clone https://github.com/tvoj-username/FoodBot-DiscordBot.git
+cd FoodBot-DiscordBot
+```
+2. Nainštaluj závislosti:
+```
+pip install -r requirements.txt
+```
+3. Vytvor si súbor `config.json` podľa [Konfigurácie](#konfigurácia)
+4. Nastav si env premennú s tokenom (Linux/macOS):
+```
+export TOKEN=discord_token
+```
+alebo vo Windows PowerShell:
+```
+setx TOKEN "discord_token"
+```
+5. Spusti bota:
+```
+python main.py
+```
+### 3. Hosting (odporúčané)
+Bot musí byť neustále online, preto sa odporúča nasadiť ho na hosting.
+**Docker build a run**
+1. Urob image:
+```
+docker build -t foodbot-image .
+```
+2. Spusti kontajner s env premennou:
+```
+docker run -d --name foodbot -e TOKEN=discord_token foodbot-image
+```
 ## Konfigurácia
 Súbor config.json obsahuje nastavenia pre jednotlivé servery, kde bot pôsobí. Kľúčom v JSON je ID serveru.
 ### Príklad
@@ -28,6 +73,24 @@ Súbor config.json obsahuje nastavenia pre jednotlivé servery, kde bot pôsobí
 > [!TIP]
 > Pre pridanie ďalšieho servera staćí pridať novú položku s jeho Guild ID.
 ## Štruktúra
+### FoodBot-DiscordBot/
 - **core/**
     - `commands.py`
     - `events.py`
+- **scraper/**
+    - `ENMscraper.py` - Eat&Meet scraper
+    - `DRUZBAscraper.py` - Družba Cantina scraper
+    - `FIITFOODscraper.py` - FiitFood scraper
+- **utils/**
+    - `accessControl` - kontrola prístupu
+    - `config.py` - načítanie configu
+    - `emojiMap.py` - mapovanie emoji ku kategóriam jedál
+    - `exceptions.py` - custom výnimky
+- `config.json` - konfigurácia
+- `Dockerfile` - Docker build súbor
+- `main.py` - Hlavný entrypoint pre spustenie bota
+- `README.md` - Dokumentácia projektu
+- `requirements.txt` - Zoznam Python závislostí
+## Credits
+* Autori: @jfridrich1, @ElGansoConLaRinonera, @trubkazNY
+* Projekt vytvorený ako open-source Discord bot pre zverejňovanie denných menu z Eat&Meet, Družba Cantina a FiitFood.
