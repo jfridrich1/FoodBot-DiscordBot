@@ -1,5 +1,6 @@
 # FoodBot-DiscordBot
-Discord bot, ktorý každý deň zverejňuje denné menu z Eat&Meet, Družba Cantina a FiitFood. Menu sú poslané správou do kanálov, ktoré sú nakonfiguované v config súbore. Taktiež sa dá nakonfigurovať aj rola, ktorá sa pingne pri poslaní denného menu, ako aj farba správy.
+Tento Discord bot automaticky zverejňuje denné menu z reštaurácií **Eat&Meet**, **Družba Cantina** a **FiitFood** každý deň. Menu sú odosielané ako správy do kanálov, ktoré si nakonfigurujete v config súbore.
+Bot tiež umožňuje nastaviť rolu, ktorá bude pinguje pri zverejnení denného menu, ako aj upravovať farbu správy pre lepšiu prispôsobiteľnosť.
 ## 🔍 Ukážka
 
 ## 🚀 Funkcie
