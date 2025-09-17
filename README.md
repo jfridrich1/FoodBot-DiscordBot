@@ -30,7 +30,7 @@ cd FoodBot-DiscordBot
 ```
 pip install -r requirements.txt
 ```
-3. Vytvor si súbor `config.json` podľa [Konfigurácie](#konfigurácia)
+3. Vytvor si súbor `config.json` podľa [Konfigurácie](#-konfigurácia)
 4. Nastav si env premennú s tokenom (Linux/macOS):
 ```
 export TOKEN=discord_token
