@@ -21,10 +21,13 @@ Súbor config.json obsahuje nastavenia pre jednotlivé servery, kde bot pôsobí
 }
 ```
 ### Vysvetlenie
-+ **Guild ID** ("1382109119347167352") - unikátne ID servera, bot podľa toho vie, kde má posielať správy.
++ **Guild ID** - unikátne ID servera, bot podľa toho vie, kde má posielať správy, napr "1382109119347167352".
 + **"channel_id"** - ID textového kanála, do ktorého sa pošle denné menu.
 + **"role_id"** - ID role, ktorá bude pri správe mentionnutá (ping).
 + **"embed_color"** - farba embed správy v **hexadecimálnej RGB forme**, zapísana ako **integer**
 > [!TIP]
 > Pre pridanie ďalšieho servera staćí pridať novú položku s jeho Guild ID.
 ## Štruktúra
+- **core/**
+    - `commands.py`
+    - `events.py`
