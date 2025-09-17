@@ -1,13 +1,13 @@
 # FoodBot-DiscordBot
 Discord bot, ktorý každý deň zverejňuje denné menu z Eat&Meet, Družba Cantina a FiitFood. Menu sú poslané správou do kanálov, ktoré sú nakonfiguované v config súbore. Taktiež sa dá nakonfigurovať aj rola, ktorá sa pingne pri poslaní denného menu, ako aj farba správy.
-## Ukážka
+## 🔍 Ukážka
 
-## Funkcie
+## 🚀 Funkcie
 * 📌 Automatické posielanie denného menu z 3 webov
 * ⚙️ Konfigurácia kanálov, rolí a farby správ
 * 🔄 Možnosť spustiť manuálne refresh
 * ⏰ Plánované spúšťanie každý deň
-## Setup
+## ⚙️ Setup
 ### 1. Vytvorenie Discord aplikácie
 Aby bot fungoval, je potrebné najprv vytvoriť aplikáciu a bota na [Discord Developer Portal](https://discord.com/developers/applications):
 1. Prihlás sa na [discord.dev](https://discord.com/developers/applications)
@@ -53,7 +53,7 @@ docker build -t foodbot-image .
 ```
 docker run -d --name foodbot -e TOKEN=discord_token foodbot-image
 ```
-## Konfigurácia
+## 🔧 Konfigurácia
 Súbor config.json obsahuje nastavenia pre jednotlivé servery, kde bot pôsobí. Kľúčom v JSON je ID serveru.
 ### Príklad
 ```
@@ -65,14 +65,14 @@ Súbor config.json obsahuje nastavenia pre jednotlivé servery, kde bot pôsobí
     }
 }
 ```
-### Vysvetlenie
+### 🔑 Vysvetlenie parametrov
 + **Guild ID** - unikátne ID servera, bot podľa toho vie, kde má posielať správy, napr "1382109119347167352".
 + **"channel_id"** - ID textového kanála, do ktorého sa pošle denné menu.
 + **"role_id"** - ID role, ktorá bude pri správe mentionnutá (ping).
 + **"embed_color"** - farba embed správy v **hexadecimálnej RGB forme**, zapísana ako **integer**
 > [!TIP]
 > Pre pridanie ďalšieho servera staćí pridať novú položku s jeho Guild ID.
-## Štruktúra
+## 📂 Štruktúra projektu
 ### FoodBot-DiscordBot/
 - **core/**
     - `commands.py`
@@ -91,6 +91,6 @@ Súbor config.json obsahuje nastavenia pre jednotlivé servery, kde bot pôsobí
 - `main.py` - Hlavný entrypoint pre spustenie bota
 - `README.md` - Dokumentácia projektu
 - `requirements.txt` - Zoznam Python závislostí
-## Credits
+## 💎 Kredity
 * Autori: @jfridrich1, @ElGansoConLaRinonera, @trubkazNY
 * Projekt vytvorený ako open-source Discord bot pre zverejňovanie denných menu z Eat&Meet, Družba Cantina a FiitFood.
