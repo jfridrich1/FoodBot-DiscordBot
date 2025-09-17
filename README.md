@@ -1,8 +1,9 @@
 # FoodBot-DiscordBot
-Tento Discord bot automaticky zverejňuje denné menu z reštaurácií **Eat&Meet**, **Družba Cantina** a **FiitFood** každý deň. Menu sú odosielané ako správy do kanálov, ktoré si nakonfigurujete v config súbore.
+Tento Discord bot automaticky zverejňuje denné menu z reštaurácií **Eat&Meet**, **Družba Cantina** a **FiitFood** každý deň. Menu sú odosielané ako správy do kanálov, ktoré si nakonfigurujete v config súbore.\
 Bot tiež umožňuje nastaviť rolu, ktorá bude pinguje pri zverejnení denného menu, ako aj upravovať farbu správy pre lepšiu prispôsobiteľnosť.
 ## 🔍 Ukážka
-
+[Ukážka 1](message_showcase1.png)
+[Ukážka 2](message_showcase2.png)
 ## 🚀 Funkcie
 * 📌 Automatické posielanie denného menu z 3 webov
 * ⚙️ Konfigurácia kanálov, rolí a farby správ
