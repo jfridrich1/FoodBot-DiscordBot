@@ -84,9 +84,11 @@ async def send_enm_menu(config, channel, guild_id):
 async def send_druzba_menu(config, channel, guild_id):
     try:
         #await channel.purge(limit=6)
+        embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
+
         meal_categories, meal_names, allergens, main_prices, secondary_prices = druzbaScrap()
         
-        embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
+        #embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         string_embed = ""
 
@@ -125,7 +127,13 @@ async def send_druzba_menu(config, channel, guild_id):
         await channel.send(embed=druzba_embed)
         
     except WeekendError as e:
-        await channel.send("Družba cez víkend nerobí :(")
+        druzba_error_embed = discord.Embed(
+            title="Družba",
+            description="Cez víkend len stále menu",
+            color=embed_color,
+            url="https://www.druzbacatering.sk/nasa-ponuka/vianocne-pecivo/"
+        )
+        await channel.send(embed=druzba_error_embed)
     except MenuNotFoundError as e:
         await channel.send("Nepodarilo sa nájsť dnešné menu.")
     except MenuBodyNotFoundError as e:
@@ -135,9 +143,11 @@ async def send_druzba_menu(config, channel, guild_id):
 
 async def send_fiitfood_menu(config, channel, guild_id):
     try:
+        embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
+
         meal_categories, meal_names, main_prices, allergens = fiitfoodScrap()
 
-        embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
+        #embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         string_embed = ""
 
@@ -175,7 +185,13 @@ async def send_fiitfood_menu(config, channel, guild_id):
         await channel.send(embed=fiitfood_embed)
 
     except WeekendError as e:
-        await channel.send("FiitFood cez víkend nerobí :(")
+        fiitfood_error_embed = discord.Embed(
+            title="FiitFood",
+            description="FiitFood cez víkend nerobí :(",
+            color=embed_color,
+            url="http://www.freefood.sk/menu/#fiit-food"
+        )
+        await channel.send(embed=fiitfood_error_embed)
     except MenuNotFoundError as e:
         await channel.send("Nepodarilo sa nájsť dnešné menu.")
     except MenuBodyNotFoundError as e:
@@ -225,6 +241,10 @@ def use_commands(bot):
         embed = discord.Embed(title="Test obrázok")
         embed.set_image(url=url)
         await ctx.send(embed=embed)
+
+    #@bot.command()
+    #async def rmv(ctx, number: int):
+        #await ctx.channel.purge(limit=number+1)
 
     # Príkaz na manuálne posielanie denného menu
     @bot.command()

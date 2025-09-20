@@ -8,7 +8,7 @@ def use_events(bot):
     @bot.event
     async def on_ready():
         #print(f'Login {bot.user.name}')
-        await bot.change_presence(status=discord.Status.online)
+        await bot.change_presence(status=discord.Status.offline)
 
         # Spustenie plánovača pri štarte bota
         scheduler = AsyncIOScheduler()
