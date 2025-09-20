@@ -1,6 +1,9 @@
 class ScrappingError(Exception):
     """Basic exception for scrapping."""
 
+class WeekendError(Exception):
+    """Exception: due to Druzba and FiitFood structure, menu is not available during weekend."""
+
 class MenuNotFoundError(ScrappingError):
     """Exception: today menu not found."""
 

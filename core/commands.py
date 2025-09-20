@@ -7,9 +7,9 @@ from scraper.DRUZBAscraper import druzbaScrap
 from scraper.FIITFOODscraper import fiitfoodScrap
 
 from utils.config import load_config
-from utils.emoji_map import title_emoji_mapper
+from utils.emojiMap import title_emoji_mapper
 from utils.accessControl import accessCheck
-from utils.exceptions import MenuNotFoundError, MenuBodyNotFoundError, InvalidGuildError, InvalidChannelError
+from utils.exceptions import WeekendError, MenuNotFoundError, MenuBodyNotFoundError, InvalidGuildError, InvalidChannelError
 
 async def daily_update(bot: Bot):
     config = load_config()
@@ -24,6 +24,7 @@ async def daily_update(bot: Bot):
             continue
 
         channel = bot.get_channel(channel_id)
+        await channel.purge(limit=4)
         if channel:
             await send_enm_menu(config, channel, guild.id)
             await send_druzba_menu(config, channel, guild.id)
@@ -45,20 +46,12 @@ async def send_enm_menu(config, channel, guild_id):
             category = f"{meal_categories[i]:<130}"
             name = f"{meal_names[i]}"
 
-            # embed = discord.Embed(
-            #     title=f"{emoji} {category}\n{name}",
-            #     #title=f"{emoji} {meal_categories[i]} \n{meal_names[i]}", 
-            #     description=f"Cena: *{main_prices[i]}*  **{secondary_prices[i]}**",
-            #     color=embed_color
-            # )
-            # embed.set_footer(text=f"{allergens[i]}")
-            # embed_list.append(embed)
-
             string_embed += f"{emoji} **{category}**\n{name}\nCena: *{main_prices[i]}*  **{secondary_prices[i]}**\n"
             if allergens[i] != "":
                 string_embed += f"{allergens[i]}\n\n"
             else:
                 string_embed += "\n"
+
         enm_embed = discord.Embed(
             title="Eat&Meet",
             description=string_embed,
@@ -103,13 +96,6 @@ async def send_druzba_menu(config, channel, guild_id):
             name = f"{meal_names[i]}"
             f_secondary_price = f"/ *{secondary_prices[i]}*"
 
-            # embed = discord.Embed(
-            #     title=f"{meal_categories[i]} {name}",
-            #     description=f"Cena: **{main_prices[i]}** {f_secondary_price}",
-            #     color=embed_color
-            # )
-            # embed.set_footer(text=f"{allergens[i]}")
-            # embed_list.append(embed)
             string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: **{main_prices[i]}** {f_secondary_price}\n"
             if allergens[i] != "":
                 string_embed += f"{allergens[i]}\n\n"
@@ -138,6 +124,8 @@ async def send_druzba_menu(config, channel, guild_id):
         # Poslanie všetkých správ
         await channel.send(embed=druzba_embed)
         
+    except WeekendError as e:
+        await channel.send("Družba cez víkend nerobí :(")
     except MenuNotFoundError as e:
         await channel.send("Nepodarilo sa nájsť dnešné menu.")
     except MenuBodyNotFoundError as e:
@@ -157,14 +145,6 @@ async def send_fiitfood_menu(config, channel, guild_id):
         for i in range(len(meal_names)):
             emoji = title_emoji_mapper(meal_categories[i])
             name = f"{meal_names[i]}"
-
-            # embed = discord.Embed(
-            #     title=f"{meal_categories[i]} {name}",
-            #     description=f"Cena: **{main_prices[i]}**",
-            #     color=embed_color
-            # )
-            # embed.set_footer(text=f"({allergens[i]})")
-            # embed_list.append(embed)
 
             string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: **{main_prices[i]}**\n"
             if allergens[i] != "":
@@ -194,6 +174,8 @@ async def send_fiitfood_menu(config, channel, guild_id):
         # Poslanie všetkých správ
         await channel.send(embed=fiitfood_embed)
 
+    except WeekendError as e:
+        await channel.send("FiitFood cez víkend nerobí :(")
     except MenuNotFoundError as e:
         await channel.send("Nepodarilo sa nájsť dnešné menu.")
     except MenuBodyNotFoundError as e:
@@ -288,7 +270,7 @@ def use_commands(bot):
     @commands.has_permissions(manage_messages=True)
     async def mnam(ctx):
         config = load_config()
-        await ctx.channel.purge(limit=4)
+        await ctx.channel.purge(limit=5)
         try: 
             accessCheck(config, ctx)
             await send_enm_menu(config, ctx.channel, ctx.guild.id)

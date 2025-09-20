@@ -1,7 +1,7 @@
 import re
 import requests
 from bs4 import BeautifulSoup
-from utils.exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from utils.exceptions import WeekendError, MenuNotFoundError, MenuBodyNotFoundError
 from datetime import date
 
 druzba_page_url = "https://www.druzbacatering.sk/obedove-menu/"
@@ -14,12 +14,16 @@ def druzbaScrap():
     # Kontrola správnosti dnešného dátumu
     date_today = date.today()
     formatted_date = date_today.strftime("%d.%m.%Y")
+    weekday_number = date_today.isoweekday()
 
     current_date = soup.select_one(".heading-title h2").get_text(strip=True)
     current_date = current_date.split(" ")[1]
 
     if formatted_date != current_date:
-        raise MenuNotFoundError("Dnešné menu sa nenašlo. (D)")
+        if weekday_number in (6,7):
+            raise WeekendError("Víkendové menu sa nenašlo. (D)")
+        else:
+            raise MenuNotFoundError("Dnešné menu sa nenašlo. (D)")
 
     # Rozparsovanie tabuľky (všetky riadky)
     rows = soup.find_all("tr")

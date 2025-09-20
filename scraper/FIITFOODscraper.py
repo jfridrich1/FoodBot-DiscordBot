@@ -1,7 +1,7 @@
 import re
 import requests
 from bs4 import BeautifulSoup
-from utils.exceptions import MenuNotFoundError, MenuBodyNotFoundError
+from utils.exceptions import WeekendError, MenuNotFoundError, MenuBodyNotFoundError
 from datetime import date
 
 fiitfood_page_url = "http://www.freefood.sk/menu/#fiit-food"
@@ -14,6 +14,7 @@ def fiitfoodScrap():
     # Kontrola správnosti dnešného dátumu
     date_today = date.today()
     formatted_date = f"{date_today.day}.{date_today.month}.{date_today.year}"
+    weekday_number = date_today.isoweekday()
 
     ff_block = soup.find("div", id="fiit-food")
 
@@ -22,7 +23,10 @@ def fiitfoodScrap():
     # nájdi dnešný deň podľa span.day-title
     today_block = daily_offer.find("span", class_="day-title", string=lambda t: t and formatted_date in t)
     if not today_block:
-        raise MenuNotFoundError(("Dnešné menu sa nenašlo. (FF)"))
+        if weekday_number in (6,7):
+            raise WeekendError("Víkendové menu sa nenašlo. (FF)")
+        else:
+            raise MenuNotFoundError(("Dnešné menu sa nenašlo. (FF)"))
 
     # nájdi ul.day-offer patriaci k tomuto dňu
     offer_block = today_block.find_next("ul", class_="day-offer")
