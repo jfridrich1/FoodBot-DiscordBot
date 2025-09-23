@@ -3,7 +3,9 @@ from discord.ext import commands
 from discord.ext.commands import Bot
 
 from scraper.ENMscraper import enmScrap
-from scraper.DRUZBAscraper import druzbaScrap
+from scraper.DRUZBAscraper import druzbaScrapDaily
+from scraper.DRUZBAscraper import druzbaScrapWeekly
+
 from scraper.FIITFOODscraper import fiitfoodScrap
 
 from utils.config import load_config
@@ -34,9 +36,9 @@ async def send_enm_menu(config, channel, guild_id):
     try:
         # Premazanie správ pred poslaním novej spŕavy
         #await channel.purge(limit=10)
-        meal_names, main_prices, secondary_prices, allergens, meal_categories = enmScrap()
-        
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
+
+        meal_names, main_prices, secondary_prices, allergens, meal_categories = enmScrap()
 
         string_embed = ""
 
@@ -86,9 +88,7 @@ async def send_druzba_menu(config, channel, guild_id):
         #await channel.purge(limit=6)
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
-        meal_categories, meal_names, allergens, main_prices, secondary_prices = druzbaScrap()
-        
-        #embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
+        meal_categories, meal_names, allergens, main_prices, secondary_prices = druzbaScrapWeekly()
 
         string_embed = ""
 
@@ -98,7 +98,12 @@ async def send_druzba_menu(config, channel, guild_id):
             name = f"{meal_names[i]}"
             f_secondary_price = f"/ *{secondary_prices[i]}*"
 
-            string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: **{main_prices[i]}** {f_secondary_price}\n"
+            string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: "
+            if main_prices[i] != "" and secondary_prices != "":
+                string_embed += f"*{main_prices[i]}* **{f_secondary_price}\n**"
+            else:
+                string_embed += f"**V cene menu\n**"
+
             if allergens[i] != "":
                 string_embed += f"{allergens[i]}\n\n"
             else:
@@ -146,8 +151,6 @@ async def send_fiitfood_menu(config, channel, guild_id):
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         meal_categories, meal_names, main_prices, allergens = fiitfoodScrap()
-
-        #embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         string_embed = ""
 
