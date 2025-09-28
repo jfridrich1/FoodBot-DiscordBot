@@ -134,7 +134,7 @@ async def send_druzba_menu(config, channel, guild_id):
     except WeekendError as e:
         druzba_error_embed = discord.Embed(
             title="Družba",
-            description="Cez víkend len stále menu",
+            description="Cez víkend len stále menu.",
             color=embed_color,
             url="https://www.druzbacatering.sk/nasa-ponuka/vianocne-pecivo/"
         )

@@ -100,6 +100,13 @@ def druzbaScrapWeekly():
     # dnešný dátum
     date_today = date.today()
     formatted_date = date_today.strftime("%d.%m.%Y")
+    weekday_number = date_today.isoweekday()
+
+    if formatted_date != date_today:
+        if weekday_number in (6,7):
+            raise WeekendError("Víkendové menu sa nenašlo. (D)")
+        else:
+            raise MenuNotFoundError("Dnešné menu sa nenašlo. (D)")
 
     for div in soup.select("div.heading-title"):
         h2 = div.find("h2")
