@@ -26,7 +26,7 @@ def fiitfoodScrap():
         if weekday_number in (6,7):
             raise WeekendError("Víkendové menu sa nenašlo. (FF)")
         else:
-            raise MenuNotFoundError(("Dnešné menu sa nenašlo. (FF)"))
+            raise MenuNotFoundError(formatted_date, date_today)
 
     # nájdi ul.day-offer patriaci k tomuto dňu
     offer_block = today_block.find_next("ul", class_="day-offer")

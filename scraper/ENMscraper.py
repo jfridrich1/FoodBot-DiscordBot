@@ -13,7 +13,7 @@ def enmScrap():
     # Active menu = dnešné menu
     active_menu_div = soup.select_one("div.tab-pane.fade.active.in")
     if not active_menu_div:
-        raise MenuNotFoundError("Dnešné menu sa nenašlo. (EM)")
+        raise MenuNotFoundError("","")
     
     # Vyberanie položiek z dnešného menu
     items_div = active_menu_div.select("div.menu-body.menu-left")

@@ -102,11 +102,14 @@ def druzbaScrapWeekly():
     formatted_date = date_today.strftime("%d.%m.%Y")
     weekday_number = date_today.isoweekday()
 
-    if formatted_date != date_today:
+    current_date = soup.select_one(".heading-title h2").get_text(strip=True)
+    current_date = current_date.split(" ")[1]
+
+    if formatted_date != current_date:
         if weekday_number in (6,7):
             raise WeekendError("Víkendové menu sa nenašlo. (D)")
         else:
-            raise MenuNotFoundError("Dnešné menu sa nenašlo. (D)")
+            raise MenuNotFoundError(formatted_date, current_date)
 
     for div in soup.select("div.heading-title"):
         h2 = div.find("h2")
@@ -151,7 +154,9 @@ def druzbaScrapWeekly():
                     allergen_list = ""
 
                 # názov jedla (očistený o kategóriu a alergény)
-                meal_clean = re.sub(r"^(Polievka 0,33l: .*?|I\.|II\.|III\.)", "", meal_text).strip()
+                #meal_clean = re.sub(r"^(Polievka: 0,33l: .*?|I\.|II\.|III\.)", "", meal_text).strip()
+                meal_clean = re.sub(r"^(Polievka:\s*\d+,\d+l|I\.|II\.|III\.)", "", meal_text).strip()
+
                 meal_clean = re.sub(r"\([\d,]+\)", "", meal_clean).strip()
 
                 # ceny

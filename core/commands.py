@@ -140,7 +140,8 @@ async def send_druzba_menu(config, channel, guild_id):
         )
         await channel.send(embed=druzba_error_embed)
     except MenuNotFoundError as e:
-        await channel.send("Nepodarilo sa nájsť dnešné menu.")
+        #await channel.send("Nepodarilo sa nájsť dnešné menu.")
+        await channel.send(f"Nepodarilo sa nájsť dnešné menu. - {e.date_expected} {e.date_found}")
     except MenuBodyNotFoundError as e:
         await channel.send("Našlo sa menu, nepodarilo sa nájst položky z menu.")
     except Exception as e:
