@@ -40,7 +40,26 @@ async def send_enm_menu(config, channel, guild_id):
 
         meal_names, main_prices, secondary_prices, allergens, meal_categories = enmScrap()
 
-        string_embed = ""
+        # string_embed = ""
+
+        # # Správy o jednotlivých jedlách
+        # for i in range(len(meal_names)):
+        #     emoji = title_emoji_mapper(meal_categories[i])
+        #     category = f"{meal_categories[i]:<130}"
+        #     name = f"{meal_names[i]}"
+
+        #     string_embed += f"{emoji} **{category}**\n{name}\nCena: *{main_prices[i]}*  **{secondary_prices[i]}**\n"
+        #     if allergens[i] != "":
+        #         string_embed += f"{allergens[i]}\n\n"
+        #     else:
+        #         string_embed += "\n"
+
+        enm_embed = discord.Embed(
+            title="Eat&Meet",
+            description="Pon - Pia: 7:00 - 20:30\nSob - Ned: 9:00 - 19:00",
+            color=embed_color,
+            url="https://eatandmeet.sk/tyzdenne-menu"
+        )
 
         # Správy o jednotlivých jedlách
         for i in range(len(meal_names)):
@@ -48,18 +67,13 @@ async def send_enm_menu(config, channel, guild_id):
             category = f"{meal_categories[i]:<130}"
             name = f"{meal_names[i]}"
 
-            string_embed += f"{emoji} **{category}**\n{name}\nCena: *{main_prices[i]}*  **{secondary_prices[i]}**\n"
+            field_text = f"{name}\nCena: *{main_prices[i]}*  **{secondary_prices[i]}**\n"
             if allergens[i] != "":
-                string_embed += f"{allergens[i]}\n\n"
-            else:
-                string_embed += "\n"
+                field_text += f"{allergens[i]}\n"
+            if i != len(meal_names)-1:
+                field_text += "\u200B"
 
-        enm_embed = discord.Embed(
-            title="Eat&Meet",
-            description=string_embed,
-            color=embed_color,
-            url="https://eatandmeet.sk/tyzdenne-menu"
-        )
+            enm_embed.add_field(name=f"{emoji} **{category}**", value=field_text, inline=False)
 
         # Ping JSON role predtým ako sa pošle menu
         role_id = config[str(guild_id)].get("role_id")
@@ -90,31 +104,49 @@ async def send_druzba_menu(config, channel, guild_id):
 
         meal_categories, meal_names, allergens, main_prices, secondary_prices = druzbaScrapWeekly()
 
-        string_embed = ""
+        # string_embed = ""
 
         # Správy o jednotlivých jedlách
+        # for i in range(len(meal_names)):
+        #     emoji = title_emoji_mapper(meal_categories[i])
+        #     name = f"{meal_names[i]}"
+        #     f_secondary_price = f"/ *{secondary_prices[i]}*"
+
+        #     string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: "
+        #     if main_prices[i] != "" and secondary_prices != "":
+        #         string_embed += f"*{main_prices[i]}* **{f_secondary_price}\n**"
+        #     else:
+        #         string_embed += f"**V cene menu\n**"
+
+        #     if allergens[i] != "":
+        #         string_embed += f"{allergens[i]}\n\n"
+        #     else:
+        #         string_embed += "\n"
+            
+        druzba_embed = discord.Embed(
+            title="Družba",
+            description="Pon - Štv: 7:00 - 20:00\nPia: 7:00 - 18:00\nSob - Ned: 8:00 - 18:00",
+            color=embed_color,
+            url="https://www.druzbacatering.sk/jedalny-listok"
+        )
+
         for i in range(len(meal_names)):
             emoji = title_emoji_mapper(meal_categories[i])
             name = f"{meal_names[i]}"
             f_secondary_price = f"/ *{secondary_prices[i]}*"
 
-            string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: "
+            field_text = f"{name}\nCena: "
             if main_prices[i] != "" and secondary_prices != "":
-                string_embed += f"*{main_prices[i]}* **{f_secondary_price}\n**"
+                field_text += f"*{main_prices[i]}* **{f_secondary_price}\n**"
             else:
-                string_embed += f"**V cene menu\n**"
+                field_text += f"**V cene menu\n**"
 
             if allergens[i] != "":
-                string_embed += f"{allergens[i]}\n\n"
-            else:
-                string_embed += "\n"
-            
-        druzba_embed = discord.Embed(
-            title="Družba",
-            description=string_embed,
-            color=embed_color,
-            url="https://www.druzbacatering.sk/jedalny-listok"
-        )
+                field_text += f"{allergens[i]}\n"
+            if i != len(meal_names)-1:
+                field_text += "\u200B"
+
+            druzba_embed.add_field(name=f"{emoji} **{meal_categories[i]}**", value=field_text, inline=False)
 
         # Ping JSON role predtým ako sa pošle menu
         role_id = config[str(guild_id)].get("role_id")
@@ -134,7 +166,7 @@ async def send_druzba_menu(config, channel, guild_id):
     except WeekendError as e:
         druzba_error_embed = discord.Embed(
             title="Družba",
-            description="Cez víkend len stále menu.",
+            description="Pon - Štv: 7:00 - 20:00\nPia: 7:00 - 18:00\nSob - Ned: 8:00 - 18:00\n**Cez víkend len stále menu.**",
             color=embed_color,
             url="https://www.druzbacatering.sk/nasa-ponuka/vianocne-pecivo/"
         )
@@ -153,25 +185,38 @@ async def send_fiitfood_menu(config, channel, guild_id):
 
         meal_categories, meal_names, main_prices, allergens = fiitfoodScrap()
 
-        string_embed = ""
+        # string_embed = ""
 
         # Správy o jednotlivých jedlách
+        # for i in range(len(meal_names)):
+        #     emoji = title_emoji_mapper(meal_categories[i])
+        #     name = f"{meal_names[i]}"
+
+        #     string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: **{main_prices[i]}**\n"
+        #     if allergens[i] != "":
+        #         string_embed += f"({allergens[i]})\n\n" 
+        #     else:
+        #         string_embed += "\n"
+
+
+        fiitfood_embed = discord.Embed(
+            title="FiitFood",
+            description="Pon - Pia: 7:30 - 15:00",
+            color=embed_color,
+            url="http://www.freefood.sk/menu/#fiit-food"
+        )
+
         for i in range(len(meal_names)):
             emoji = title_emoji_mapper(meal_categories[i])
             name = f"{meal_names[i]}"
 
-            string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: **{main_prices[i]}**\n"
+            field_text = f"{name}\nCena: **{main_prices[i]}**\n"
             if allergens[i] != "":
-                string_embed += f"({allergens[i]})\n\n" 
-            else:
-                string_embed += "\n"
+                field_text += f"({allergens[i]})\n" 
+            if i != len(meal_names)-1:
+                field_text += "\u200B"
 
-        fiitfood_embed = discord.Embed(
-            title="FiitFood",
-            description=string_embed,
-            color=embed_color,
-            url="http://www.freefood.sk/menu/#fiit-food"
-        )
+            fiitfood_embed.add_field(name=f"{emoji} **{meal_categories[i]}**", value=field_text, inline=False)
 
         # Ping JSON role predtým ako sa pošle menu
         role_id = config[str(guild_id)].get("role_id")
@@ -253,7 +298,7 @@ def use_commands(bot):
     # Príkaz na manuálne posielanie denného menu
     @bot.command()
     @commands.has_permissions(manage_messages=True)
-    async def eat(ctx):
+    async def eat1(ctx):
         config = load_config()
         try: 
             accessCheck(config, ctx)
@@ -266,7 +311,7 @@ def use_commands(bot):
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
-    async def druzba(ctx):
+    async def druzba1(ctx):
         config = load_config()
         try: 
             accessCheck(config, ctx)
@@ -279,7 +324,7 @@ def use_commands(bot):
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
-    async def ff(ctx):
+    async def ff1(ctx):
         config = load_config()
         try: 
             accessCheck(config, ctx)
@@ -292,7 +337,7 @@ def use_commands(bot):
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
-    async def mnam(ctx):
+    async def mnam1(ctx):
         config = load_config()
         await ctx.channel.purge(limit=5)
         try: 
