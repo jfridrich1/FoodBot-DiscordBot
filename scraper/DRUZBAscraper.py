@@ -102,83 +102,83 @@ def druzbaScrapWeekly():
     formatted_date = date_today.strftime("%d.%m.%Y")
     weekday_number = date_today.isoweekday()
 
-    current_date = soup.select_one(".heading-title h2").get_text(strip=True)
-    current_date = current_date.split(" ")[1]
+    all_week = soup.select(".heading-title h2")
+    current_h2 = None
+    for h2 in all_week:
+        if formatted_date in h2.get_text(strip=True):
+            current_h2 = h2.get_text(strip=True).split(" ")[1]
+            current_div = h2.find_parent("div", class_="heading-title text-center")
+            current_table = current_div.find_next_sibling("table")
+            if not current_table:
+                raise MenuBodyNotFoundError("Ponuka z dneska sa nepodarila. (D)")
+            break
 
-    if formatted_date != current_date:
+    if formatted_date != current_h2:
         if weekday_number in (6,7):
             raise WeekendError("Víkendové menu sa nenašlo. (D)")
         else:
-            raise MenuNotFoundError(formatted_date, current_date)
+            raise MenuNotFoundError(formatted_date, current_h2)
 
-    for div in soup.select("div.heading-title"):
-        h2 = div.find("h2")
-        if h2 and formatted_date in h2.get_text(strip=True):
-            table = div.find_next_sibling("table")
-            if not table:
-                raise MenuBodyNotFoundError("Ponuka z dneska sa nepodarila. (D)")
+    rows = current_table.find_all("tr")
 
-            rows = table.find_all("tr")
+    for row in rows[1:]:
+        cols = row.find_all("td")
+        if not cols:
+            continue
 
-            for row in rows[1:]:
-                cols = row.find_all("td")
-                if not cols:
-                    continue
+        # jedlo (ľavý stĺpec)
+        meal_text = cols[0].get_text(" ", strip=True)  # spojí texty do jedného stringu
+        # cena (pravý stĺpec)
+        if len(cols) > 1:
+            price_text = cols[1].get_text(" ", strip=True)
+        else:
+            price_text = ""
 
-                # jedlo (ľavý stĺpec)
-                meal_text = cols[0].get_text(" ", strip=True)  # spojí texty do jedného stringu
-                # cena (pravý stĺpec)
-                if len(cols) > 1:
-                    price_text = cols[1].get_text(" ", strip=True)
-                else:
-                    price_text = ""
+        # Parsovanie
+        # kategória (Polievka, I., II., III.)
+        if meal_text.startswith("Polievka"):
+            category = "Polievka"
+        elif meal_text.startswith("I."):
+            category = "I."
+        elif meal_text.startswith("II."):
+            category = "II."
+        elif meal_text.startswith("III."):
+            category = "III."
+        else:
+            category = ""
 
-                # Parsovanie
-                # kategória (Polievka, I., II., III.)
-                if meal_text.startswith("Polievka"):
-                    category = "Polievka"
-                elif meal_text.startswith("I."):
-                    category = "I."
-                elif meal_text.startswith("II."):
-                    category = "II."
-                elif meal_text.startswith("III."):
-                    category = "III."
-                else:
-                    category = ""
+        # alergény v zátvorkách
+        allergen_match = re.search(r"\(([\d,]+)\)", meal_text)
+        if allergen_match:
+            allergen_list = f"({allergen_match.group(1)})"
+        else:
+            allergen_list = ""
 
-                # alergény v zátvorkách
-                allergen_match = re.search(r"\(([\d,]+)\)", meal_text)
-                if allergen_match:
-                    allergen_list = f"({allergen_match.group(1)})"
-                else:
-                    allergen_list = ""
+        # názov jedla (očistený o kategóriu a alergény)
+        meal_clean = re.sub(r"^(Polievka:?\s*\d+,\d+l:?|I\.|II\.|III\.)","", meal_text).strip()
 
-                # názov jedla (očistený o kategóriu a alergény)
-                #meal_clean = re.sub(r"^(Polievka: 0,33l: .*?|I\.|II\.|III\.)", "", meal_text).strip()
-                meal_clean = re.sub(r"^(Polievka:\s*\d+,\d+l|I\.|II\.|III\.)", "", meal_text).strip()
+        meal_clean = re.sub(r"\([\d,]+\)", "", meal_clean).strip()
 
-                meal_clean = re.sub(r"\([\d,]+\)", "", meal_clean).strip()
+        # ceny
+        price_main, price_secondary = None, None
+        prices = re.findall(r"\d+,\d+€", price_text)
+        if prices:
+            if len(prices)>=1:
+                price_main=prices[0]
+            if len(prices)>=2:
+                price_secondary=prices[1]
 
-                # ceny
-                price_main, price_secondary = None, None
-                prices = re.findall(r"\d+,\d+€", price_text)
-                if prices:
-                    if len(prices)>=1:
-                        price_main=prices[0]
-                    if len(prices)>=2:
-                        price_secondary=prices[1]
+        # "v cene menu"
+        elif price_text:
+            price_main = ""
+            price_secondary = ""
 
-                # "v cene menu"
-                elif price_text:
-                    price_main = ""
-                    price_secondary = ""
+        # filter na prazdny element
+        if category != "":
+            meal_categories.append(category)
+            meal_names.append(meal_clean)
+            allergens.append(allergen_list)
+            main_prices.append(price_secondary)
+            secondary_prices.append(price_main)
 
-                # filter na prazdny element
-                if category != "":
-                    meal_categories.append(category)
-                    meal_names.append(meal_clean)
-                    allergens.append(allergen_list)
-                    main_prices.append(price_secondary)
-                    secondary_prices.append(price_main)
-
-            return meal_categories, meal_names, allergens, main_prices, secondary_prices
+    return meal_categories, meal_names, allergens, main_prices, secondary_prices
