@@ -8,13 +8,11 @@ from scraper.DRUZBAscraper import druzbaScrapWeekly
 
 from scraper.FIITFOODscraper import fiitfoodScrap
 
-from utils.config import load_config
 from utils.emojiMap import title_emoji_mapper
 from utils.accessControl import accessCheck
 from utils.exceptions import WeekendError, MenuNotFoundError, MenuBodyNotFoundError, InvalidGuildError, InvalidChannelError
 
-async def daily_update(bot: Bot):
-    config = load_config()
+async def daily_update(config, bot: Bot):
     for guild in bot.guilds:
         guild_id = str(guild.id)
         guild_config = config.get(guild_id)
@@ -39,20 +37,6 @@ async def send_enm_menu(config, channel, guild_id):
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         meal_names, main_prices, secondary_prices, allergens, meal_categories = enmScrap()
-
-        # string_embed = ""
-
-        # # Správy o jednotlivých jedlách
-        # for i in range(len(meal_names)):
-        #     emoji = title_emoji_mapper(meal_categories[i])
-        #     category = f"{meal_categories[i]:<130}"
-        #     name = f"{meal_names[i]}"
-
-        #     string_embed += f"{emoji} **{category}**\n{name}\nCena: *{main_prices[i]}*  **{secondary_prices[i]}**\n"
-        #     if allergens[i] != "":
-        #         string_embed += f"{allergens[i]}\n\n"
-        #     else:
-        #         string_embed += "\n"
 
         enm_embed = discord.Embed(
             title="Eat&Meet",
@@ -103,25 +87,6 @@ async def send_druzba_menu(config, channel, guild_id):
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
 
         meal_categories, meal_names, allergens, main_prices, secondary_prices = druzbaScrapWeekly()
-
-        # string_embed = ""
-
-        # Správy o jednotlivých jedlách
-        # for i in range(len(meal_names)):
-        #     emoji = title_emoji_mapper(meal_categories[i])
-        #     name = f"{meal_names[i]}"
-        #     f_secondary_price = f"/ *{secondary_prices[i]}*"
-
-        #     string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: "
-        #     if main_prices[i] != "" and secondary_prices != "":
-        #         string_embed += f"*{main_prices[i]}* **{f_secondary_price}\n**"
-        #     else:
-        #         string_embed += f"**V cene menu\n**"
-
-        #     if allergens[i] != "":
-        #         string_embed += f"{allergens[i]}\n\n"
-        #     else:
-        #         string_embed += "\n"
             
         druzba_embed = discord.Embed(
             title="Družba",
@@ -185,20 +150,6 @@ async def send_fiitfood_menu(config, channel, guild_id):
 
         meal_categories, meal_names, main_prices, allergens = fiitfoodScrap()
 
-        # string_embed = ""
-
-        # Správy o jednotlivých jedlách
-        # for i in range(len(meal_names)):
-        #     emoji = title_emoji_mapper(meal_categories[i])
-        #     name = f"{meal_names[i]}"
-
-        #     string_embed += f"{emoji} **{meal_categories[i]}**\n{name}\nCena: **{main_prices[i]}**\n"
-        #     if allergens[i] != "":
-        #         string_embed += f"({allergens[i]})\n\n" 
-        #     else:
-        #         string_embed += "\n"
-
-
         fiitfood_embed = discord.Embed(
             title="FiitFood",
             description="Pon - Pia: 7:30 - 15:00",
@@ -248,12 +199,11 @@ async def send_fiitfood_menu(config, channel, guild_id):
     except Exception as e:
         await channel.send(f"Neočakávaná chyba: {type(e).__name__}: {e}")
 
-def use_commands(bot):
+def use_commands(config, bot):
     # Ping príkaz
     @bot.command()
     async def ping(ctx):
         guild_id = str(ctx.guild.id)
-        config = load_config()
 
         # Skontroluj, či pre daný server existujú údaje
         if guild_id not in config or "role_id" not in config[guild_id]:
@@ -272,34 +222,10 @@ def use_commands(bot):
         else:
             await ctx.send("Rola s týmto ID neexistuje na serveri.")
 
-    @bot.command()
-    async def info(ctx):
-        info_embed = discord.Embed(
-        title="ℹ️ Info",
-        description=(
-            "[Stránka Eat&Meet](https://eatandmeet.sk/)\n[Stránka Družby](https://www.druzbacatering.sk)\n[Stránka FiitFood](http://www.freefood.sk/menu/#fiit-food)"
-        ),
-        color=0x57F287
-        )
-        await ctx.send(embed=info_embed)
-
-    # Príkaz na testovanie posielania obrázku
-    @bot.command()
-    async def testimage(ctx):
-        url = "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
-        embed = discord.Embed(title="Test obrázok")
-        embed.set_image(url=url)
-        await ctx.send(embed=embed)
-
-    #@bot.command()
-    #async def rmv(ctx, number: int):
-        #await ctx.channel.purge(limit=number+1)
-
     # Príkaz na manuálne posielanie denného menu
     @bot.command()
     @commands.has_permissions(manage_messages=True)
     async def eat1(ctx):
-        config = load_config()
         try: 
             accessCheck(config, ctx)
             await send_enm_menu(config, ctx.channel, ctx.guild.id)
@@ -312,7 +238,6 @@ def use_commands(bot):
     @bot.command()
     @commands.has_permissions(manage_messages=True)
     async def druzba1(ctx):
-        config = load_config()
         try: 
             accessCheck(config, ctx)
             await send_druzba_menu(config, ctx.channel, ctx.guild.id)
@@ -325,7 +250,6 @@ def use_commands(bot):
     @bot.command()
     @commands.has_permissions(manage_messages=True)
     async def ff1(ctx):
-        config = load_config()
         try: 
             accessCheck(config, ctx)
             await send_fiitfood_menu(config, ctx.channel, ctx.guild.id)
@@ -338,7 +262,6 @@ def use_commands(bot):
     @bot.command()
     @commands.has_permissions(manage_messages=True)
     async def mnam1(ctx):
-        config = load_config()
         await ctx.channel.purge(limit=5)
         try: 
             accessCheck(config, ctx)
@@ -350,3 +273,26 @@ def use_commands(bot):
         except InvalidChannelError as e:
             return
             #await ctx.channel.send("zly kanal")
+
+    # @bot.command()
+    # async def info(ctx):
+    #     info_embed = discord.Embed(
+    #     title="ℹ️ Info",
+    #     description=(
+    #         "[Stránka Eat&Meet](https://eatandmeet.sk/)\n[Stránka Družby](https://www.druzbacatering.sk)\n[Stránka FiitFood](http://www.freefood.sk/menu/#fiit-food)"
+    #     ),
+    #     color=0x57F287
+    #     )
+    #     await ctx.send(embed=info_embed)
+
+    # # Príkaz na testovanie posielania obrázku
+    # @bot.command()
+    # async def testimage(ctx):
+    #     url = "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
+    #     embed = discord.Embed(title="Test obrázok")
+    #     embed.set_image(url=url)
+    #     await ctx.send(embed=embed)
+
+    #@bot.command()
+    #async def rmv(ctx, number: int):
+        #await ctx.channel.purge(limit=number+1)

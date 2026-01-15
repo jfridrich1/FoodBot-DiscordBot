@@ -7,17 +7,19 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from core.commands import use_commands
 from core.events import use_events
+from utils.config import load_config
 
 #EMBED_COLOR = 0xffe28a-
 load_dotenv()
+config = load_config()
 
 # Priradenie práv botovi
 bot_intents = discord.Intents.default()
 bot_intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=bot_intents)
 
-use_commands(bot)
-use_events(bot)
+use_commands(config, bot)
+use_events(config, bot)
 
 # Falošný HTTP kvôli web hostovaniu
 class Handler(BaseHTTPRequestHandler):
