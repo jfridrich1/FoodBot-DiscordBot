@@ -10,29 +10,25 @@ from utils.exceptions import InvalidGuildError, InvalidChannelError
 
 def use_commands(config, bot):
     @bot.command()
+    @commands.has_permissions(manage_messages=True)
     async def ping(ctx):
+        try:
+            check_access(config, ctx)
+        except (InvalidGuildError, InvalidChannelError):
+            return
+
         guild_id = str(ctx.guild.id)
-
-        # Skontroluj, či pre daný server existujú údaje
-        if guild_id not in config or "role_id" not in config[guild_id]:
-            return
-        
-        expected_channel_id = config[guild_id]["channel_id"]
-
-        if ctx.channel.id != expected_channel_id:
-            return
-
         role_id = config[guild_id]["role_id"]
         role = ctx.guild.get_role(int(role_id))
 
         if role:
             await ctx.send(f'{role.mention} bu!')
         else:
-            await ctx.send("Rola s týmto ID neexistuje na serveri.")
+            await ctx.send("Ups, rola z konfigu neexistuje na serveri!")
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
-    async def eat1(ctx):
+    async def eat(ctx):
         try: 
             check_access(config, ctx)
             await send_enm_menu_embed(config, ctx.channel, ctx.guild.id)
@@ -43,7 +39,7 @@ def use_commands(config, bot):
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
-    async def druzba1(ctx):
+    async def druzba(ctx):
         try: 
             check_access(config, ctx)
             await send_druzba_menu_embed(config, ctx.channel, ctx.guild.id)
@@ -54,7 +50,7 @@ def use_commands(config, bot):
 
     @bot.command()
     @commands.has_permissions(manage_messages=True)
-    async def ff1(ctx):
+    async def ff(ctx):
         try: 
             check_access(config, ctx)
             await send_fiitfood_menu_embed(config, ctx.channel, ctx.guild.id)

@@ -7,6 +7,7 @@ from scrapers.druzba import get_druzba_menu
 from utils.emoji_map import get_emoji_for_title
 from utils.exceptions import WeekendError, MenuNotFoundError, MenuBodyNotFoundError
 
+# Eat&Meet embed + poslanie
 async def send_enm_menu_embed(config, channel, guild_id):
     try:
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
@@ -20,7 +21,7 @@ async def send_enm_menu_embed(config, channel, guild_id):
             url="https://eatandmeet.sk/tyzdenne-menu"
         )
 
-        # Správy o jednotlivých jedlách
+        # spravy o jednotlivych jedlach
         for i in range(len(meal_names)):
             emoji = get_emoji_for_title(meal_categories[i])
             category = f"{meal_categories[i]:<130}"
@@ -34,8 +35,7 @@ async def send_enm_menu_embed(config, channel, guild_id):
 
             enm_embed.add_field(name=f"{emoji} **{category}**", value=field_text, inline=False)
 
-        # Discord má limit 10 embedov v embede, ak ich je viac, treba poslať po dávkach po 10
-        # Poslanie všetkých správ
+        # poslanie vsetkych sprav
         await channel.send(embed=enm_embed)
         
     except MenuNotFoundError:
@@ -45,6 +45,7 @@ async def send_enm_menu_embed(config, channel, guild_id):
     except Exception as e:
         await channel.send(f"Neočakávaná chyba: {type(e).__name__}: {e}")
 
+# Druzba embed + poslanie
 async def send_druzba_menu_embed(config, channel, guild_id):
     try:
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
@@ -76,7 +77,7 @@ async def send_druzba_menu_embed(config, channel, guild_id):
 
             druzba_embed.add_field(name=f"{emoji} **{meal_categories[i]}**", value=field_text, inline=False)
 
-        # Poslanie všetkých správ
+        # poslanie vsetkych sprav
         await channel.send(embed=druzba_embed)
         
     except WeekendError as e:
@@ -96,6 +97,7 @@ async def send_druzba_menu_embed(config, channel, guild_id):
     except Exception as e:
         await channel.send(f"Neočakávaná chyba: {type(e).__name__}: {e}")
 
+# FiitFood embed + poslanie
 async def send_fiitfood_menu_embed(config, channel, guild_id):
     try:
         embed_color = config.get(str(guild_id), {}).get("embed_color", 0xffe28a)
@@ -121,7 +123,7 @@ async def send_fiitfood_menu_embed(config, channel, guild_id):
 
             fiitfood_embed.add_field(name=f"{emoji} **{meal_categories[i]}**", value=field_text, inline=False)
 
-        # Poslanie všetkých správ
+        # poslanie vsetkych sprav
         await channel.send(embed=fiitfood_embed)
 
     except WeekendError:

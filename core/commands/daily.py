@@ -2,6 +2,7 @@ from discord.ext.commands import Bot
 
 from core.commands.embeds import send_enm_menu_embed, send_druzba_menu_embed, send_fiitfood_menu_embed
 
+# poslanie menu vsetkych 3 jedalni - kazdodenny job
 async def send_daily_menus(config, bot: Bot):
     for guild in bot.guilds:
         guild_id = str(guild.id)
@@ -29,6 +30,7 @@ async def send_daily_menus(config, bot: Bot):
             await send_druzba_menu_embed(config, channel, guild.id)
             await send_fiitfood_menu_embed(config, channel, guild.id)
 
+# poslanie menu vsetkych 3 jedalni - zavolanie prikazom
 async def send_daily_menus_to_channel(config, channel, guild_id):
     guild_config = config.get(str(guild_id))
     if not guild_config:
