@@ -57,9 +57,9 @@ Súbor config.json obsahuje nastavenia pre jednotlivé servery, kde bot pôsobí
 ### Príklad
 ```
 {
-    "1382109119347167352": {
-        "channel_id": 1391047537514778696,
-        "role_id": 1397325138198007888,
+    "1382109119347167350": {
+        "channel_id": 1391047537514778690,
+        "role_id": 1397325138198007880,
         "embed_color": 15110684
     }
 }
@@ -74,22 +74,25 @@ Súbor config.json obsahuje nastavenia pre jednotlivé servery, kde bot pôsobí
 ## 📂 Štruktúra projektu
 ### FoodBot-DiscordBot/
 - **core/**
-    - `commands.py`
+    - **commands/**
+      - `commands.py`
+      - `daily.py`
+      - `embeds.py`
     - `events.py`
-- **scraper/**
-    - `ENMscraper.py` - Eat&Meet scraper
-    - `DRUZBAscraper.py` - Družba Cantina scraper
-    - `FIITFOODscraper.py` - FiitFood scraper
+- **scrapers/**
+    - `druzba.py` - Družba Cantina scraper
+    - `enm.py` - Eat&Meet scraper
+    - `fiitfood.py` - FiitFood scraper
 - **utils/**
-    - `accessControl` - kontrola prístupu
-    - `config.py` - načítanie configu
-    - `emojiMap.py` - mapovanie emoji ku kategóriam jedál
+    - `access_control` - kontrola prístupu
+    - `config_handler.py` - načítanie configu
+    - `emoji_map.py` - mapovanie emoji ku kategóriam jedál
     - `exceptions.py` - custom výnimky
 - `config.json` - konfigurácia
 - `Dockerfile` - Docker build súbor
-- `main.py` - Hlavný entrypoint pre spustenie bota
-- `README.md` - Dokumentácia projektu
-- `requirements.txt` - Zoznam Python závislostí
+- `main.py` - hlavný entrypoint pre spustenie bota
+- `README.md` - dokumentácia projektu
+- `requirements.txt` - zoznam Python závislostí
 ## 💎 Kredity
 * Autori: @jfridrich1, @ElGansoConLaRinonera, @trubkazNY
 * Projekt vytvorený ako open-source Discord bot pre zverejňovanie denných menu z Eat&Meet, Družba Cantina a FiitFood.
