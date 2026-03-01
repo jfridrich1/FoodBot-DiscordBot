@@ -2,26 +2,51 @@ import discord
 from discord.ext import commands
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
-from core.commands import daily_update
+from core.commands.daily import send_daily_menus
 
-def use_events(bot):
+def use_events(config, bot):
     @bot.event
     async def on_ready():
-        #print(f'Login {bot.user.name}')
-        await bot.change_presence(status=discord.Status.offline)
+        await bot.change_presence(status=discord.Status.online)
 
-        # Spustenie plánovača pri štarte bota
+        # planovac
         scheduler = AsyncIOScheduler()
-        scheduler.add_job(daily_update, CronTrigger(hour=6, minute=00), args=[bot])  # každodenný job
-        #scheduler.add_job(daily_update, CronTrigger(hour=15, minute=00), args=[bot])  # test job
+        scheduler.add_job(send_daily_menus, CronTrigger(hour=6, minute=00), args=[config, bot])  # každodenný job, 7:00
         scheduler.start()
 
     @bot.event
     async def on_message(message):
         if message.author == bot.user:
             return
-        if "gej" in message.content.lower().strip():
+        content = message.content.lower().strip()
+
+        # spravy poslane do DM + GUILD
+        if "gej" in content:
             await message.channel.send('burin')
-        if "burin" in message.content.lower().strip():
+
+        if "burin" in content:
             await message.channel.send('🇭🇺')
+        
+        # spravy poslane iba do DM
+        if not message.guild:
+            if content == "info":
+                info_embed = discord.Embed(
+                    title="ℹ️ Info",
+                    description=(
+                        "[Stránka Eat&Meet](https://eatandmeet.sk/)\n"
+                        "[Stránka Družby](https://www.druzbacatering.sk)\n"
+                        "[Stránka FiitFood](http://www.freefood.sk/menu/#fiit-food)"
+                    ),
+                    color=0xFF2688
+                )
+                info_embed.set_footer(text=f"Provided by @breehze")
+                await message.channel.send(embed=info_embed)
+            
+            if "test" in content:
+                url = "https://htmlcolorcodes.com/assets/images/colors/baby-blue-color-solid-background-1920x1080.png"
+                image_embed = discord.Embed(title="Test obrázok")
+                image_embed.set_image(url=url)
+                await message.channel.send(embed=image_embed)
+
         await bot.process_commands(message)
+        # color=0x57F287

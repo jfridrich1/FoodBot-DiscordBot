@@ -1,5 +1,4 @@
-# Mapa kategórií a emoji
-emoji_map = {
+CATEGORY_EMOJI_MAP = {
     "POLIEVKA": "🥣",
     "MENU": "🍽",
     "MÚČNE": "🥞",
@@ -14,9 +13,9 @@ emoji_map = {
     "3.": "🍽"
 }
 
-# Funkcia na mapovanie kategórie k príslušnému emoji
-def title_emoji_mapper(title: str) -> str:
-    for key in emoji_map:
+# funkcia na mapovanie kategorie k prislusnemu emoji
+def get_emoji_for_title(title: str) -> str:
+    for key in CATEGORY_EMOJI_MAP:
         if key in title.upper():
-            return emoji_map[key]
+            return CATEGORY_EMOJI_MAP[key]
     return "🍽"

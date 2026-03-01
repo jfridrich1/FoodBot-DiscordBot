@@ -1,0 +1,5 @@
+* lepsi exception handling
+napr. namiesto error spravy ("Neočakávaná chyba: AttributeError: 'NoneType' object has no attribute 'find'" alebo
+"Nepodarilo sa nájsť dnešné menu. - 26.12.2025 None") nenapisat nic alebo chybovy discord print
+* timing tuning - napr o 8.00?
+* prejst predpraveny update a doladit
