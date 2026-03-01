@@ -5,9 +5,9 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
-from core.commands import use_commands
+from core.commands.commands import use_commands
 from core.events import use_events
-from utils.config import load_config
+from utils.config_handler import load_config
 
 #EMBED_COLOR = 0xffe28a-
 load_dotenv()

@@ -4,9 +4,6 @@ class ScrappingError(Exception):
 class WeekendError(Exception):
     """Exception: due to Druzba and FiitFood structure, menu is not available during weekend."""
 
-# class MenuNotFoundError(ScrappingError):
-#     """Exception: today menu not found."""
-
 class MenuNotFoundError(Exception):
     def __init__(self, date_expected, date_found):
         self.date_expected = date_expected
