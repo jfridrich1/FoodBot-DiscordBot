@@ -10,7 +10,7 @@ async def send_daily_menus(config, bot: Bot):
         if not guild_config:
             continue
 
-        channel_id = guild_config.get("channel_id")
+        channel_id = int(guild_config.get("channel_id"))
         role_id = guild_config.get("role_id")
 
         if not channel_id:

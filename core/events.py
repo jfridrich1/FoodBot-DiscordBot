@@ -4,14 +4,20 @@ from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.cron import CronTrigger
 from core.commands.daily import send_daily_menus
 
+# from datetime import datetime, timedelta
+
 def use_events(config, bot):
     @bot.event
     async def on_ready():
-        await bot.change_presence(status=discord.Status.online)
+        await bot.change_presence(status=discord.Status.dnd)
+
+        # now = datetime.now()
+        # run_time = now + timedelta(minutes=2)
 
         # planovac
         scheduler = AsyncIOScheduler()
         scheduler.add_job(send_daily_menus, CronTrigger(hour=6, minute=00), args=[config, bot])  # každodenný job, 7:00
+        # scheduler.add_job(send_daily_menus, CronTrigger(hour=run_time.hour, minute=run_time.minute), args=[config, bot])
         scheduler.start()
 
     @bot.event
