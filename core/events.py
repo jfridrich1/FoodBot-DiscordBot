@@ -9,7 +9,7 @@ from core.commands.daily import send_daily_menus
 def use_events(config, bot):
     @bot.event
     async def on_ready():
-        await bot.change_presence(status=discord.Status.dnd)
+        await bot.change_presence(status=discord.Status.online)
 
         # now = datetime.now()
         # run_time = now + timedelta(minutes=2)
